@@ -1,4 +1,6 @@
 import "./global.css"
+import {Toaster} from "@/components/ui/sonner";
+import React from "react";
 
 export const metadata = {
   title: 'COMP 3005 - Final Project',
@@ -12,7 +14,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <main>
+          {children}
+        </main>
+        <Toaster/>
+      </body>
     </html>
   )
 }
