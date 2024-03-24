@@ -41,8 +41,9 @@ def test_get_from_db():
 
 @app.route('/testDbClear', methods=['GET'])
 def test_clear_db():
-    cursor.execute("""
-        DELETE FROM test;
+    cursor.execute(
+    """
+    DELETE FROM test;
     """)
 
     conn.commit()
