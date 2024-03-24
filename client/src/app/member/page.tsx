@@ -37,11 +37,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {useState} from "react";
+import React, {useState} from "react";
 import {tempBills, tempMember, tempSessions} from "@/app/utils/tempValues";
 
 export default function Page() {
   const [selectSection, setSelectedSection] = useState(0)
+  const [sessions, setSessions] = useState(tempSessions)
+  const [bills, setBills] = useState(tempBills)
 
   const getSection = () => {
     switch(selectSection) {
@@ -52,12 +54,32 @@ export default function Page() {
       case 2:
         return <Achievements />;
       case 3:
-        return <Sessions sessions={tempSessions} />;
+        return <Sessions sessions={sessions} />;
       case 4:
-        return <Billing bills={tempBills} />;
+        return <Billing bills={bills} setBills={setBills} />;
       default:
         return null;
     }
+  }
+
+  const filterSessions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value;
+
+    setSessions(tempSessions.filter(session =>
+      session.name.toLowerCase().includes(input.toLowerCase())
+    ));
+  }
+
+  const getBillsUnpaid = (): number => {
+    let n = 0;
+
+    bills && bills.map((bill, index) => {
+      if (!bill.paid) {
+        ++n;
+      }
+    })
+
+    return n;
   }
 
   return (
@@ -100,9 +122,6 @@ export default function Page() {
               >
                 <Dumbbell className="h-4 w-4" />
                 Exercises
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
               </Link>
               <Link
                 href="#"
@@ -139,6 +158,14 @@ export default function Page() {
               >
                 <ReceiptText className="h-4 w-4" />
                 Billing
+                {
+                  getBillsUnpaid() == 0 ?
+                  null
+                  :
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                    {getBillsUnpaid()}
+                  </Badge>
+                }
               </Link>
             </nav>
           </div>
@@ -244,6 +271,8 @@ export default function Page() {
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
+                  onChange={filterSessions}
+                  onClick={() => setSelectedSection(3)}
                   type="search"
                   placeholder="Search sessions..."
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
