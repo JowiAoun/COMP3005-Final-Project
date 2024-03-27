@@ -113,7 +113,7 @@ CREATE TABLE EnrolledIn(
 	PRIMARY KEY(memberId,sessionId)
 );
 
-CREATE Filters(
+CREATE TABLE Filters(
 	FOREIGN KEY(sessionId)
 		REFERENCES Session,
 	Filter VARCHAR(32)
