@@ -63,3 +63,14 @@ CREATE TABLE TrainerAvailabilities(
 
 );
 
+CREATE TABLE Bills(
+	invoice_id SERIAL PRIMARY KEY,
+	amount float(2)
+	service VARCHAR(10)
+	FOREIGN KEY(admin_id)
+		REFERENCES Administrators(admin_id)
+	FOREIGN KEY(member_id)
+		REFERENCES Members(member_id)
+	
+);
+
