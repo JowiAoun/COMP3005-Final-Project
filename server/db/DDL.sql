@@ -90,5 +90,17 @@ CREATE TABLE Session(
 		REFERENCES Administrator(adminId),
 );
 
+CREATE TABLE Room(
+	roomNumber INT NOT NULL DEFAULT 1,
+	capacity INT NOT NULL DEFAULT 0,
+	isAvailable BOOLEAN NOT NULL DEFAULT FALSE
+	FOREIGN KEY(sessionId)
+		REFERENCES Session(sessionId)
+);
 
-
+CREATE TABLE Equipment(
+	name VARCHAR(30) NOT NULL,
+	status VARCHAR(30) NOT NULL,
+	FOREIGN KEY(roomNumber)
+		REFERENCES Room(roomNumber)
+);
