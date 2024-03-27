@@ -109,15 +109,15 @@ CREATE TABLE Equipment(
 
 CREATE TABLE EnrolledIn(
 	FOREIGN KEY(memberId)
-		REFERENCES memberID,
+		REFERENCES Members(memberID),
 	FOREIGN KEY(sessionId)
-		REFERENCES sessionId
+		REFERENCES Session(sessionId),
 	PRIMARY KEY(memberId,sessionId)
 );
 
 CREATE TABLE Filters(
 	FOREIGN KEY(sessionId)
-		REFERENCES Session,
+		REFERENCES Session(sessionId),
 	Filter VARCHAR(32),
 	PRIMARY KEY(sessionId)
 );
