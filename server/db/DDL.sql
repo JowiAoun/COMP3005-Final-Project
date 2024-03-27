@@ -75,7 +75,7 @@ CREATE TABLE Bills(
 );
 
 CREATE TABLE Session(
-	sessionId SERIAL PRIMARY KEY,
+	sessionId SERIAL,
 	type VARCHAR(10),
 	capacity INT,
 	name VARCHAR(30),
@@ -88,6 +88,7 @@ CREATE TABLE Session(
 		REFERENCES Rooms(roomNumber),
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId),
+	PRIMARY KEY(sessionId,trainerId)
 );
 
 CREATE TABLE Room(
