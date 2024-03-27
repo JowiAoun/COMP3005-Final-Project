@@ -74,3 +74,21 @@ CREATE TABLE Bills(
 	
 );
 
+CREATE TABLE Session(
+	sessionId SERIAL PRIMARY KEY,
+	type VARCHAR(10),
+	capacity INT,
+	name VARCHAR(30),
+	description TEXT,
+	startDate DATE DEFAULT CURRENT_DATE,
+	endDATE DATE DEFAULT CURRENT_DATE,
+	FOREIGN KEY(trainerId)
+		REFERENCES Trainer(trainerId),
+	FOREIGN KEY(roomNumber)
+		REFERENCES Rooms(roomNumber),
+	FOREIGN KEY(adminId)
+		REFERENCES Administrator(adminId),
+);
+
+
+
