@@ -104,3 +104,17 @@ CREATE TABLE Equipment(
 	FOREIGN KEY(roomNumber)
 		REFERENCES Room(roomNumber)
 );
+
+CREATE TABLE EnrolledIn(
+	FOREIGN KEY(memberId)
+		REFERENCES memberID,
+	FOREIGN KEY(sessionId)
+		REFERENCES sessionId
+	PRIMARY KEY(memberId,sessionId)
+);
+
+CREATE Filters(
+	FOREIGN KEY(sessionId)
+		REFERENCES Session,
+	Filter VARCHAR(32)
+);
