@@ -115,9 +115,14 @@ CREATE TABLE EnrolledIn(
 	PRIMARY KEY(memberId,sessionId)
 );
 
-CREATE TABLE Filters(
+CREATE Filters(
 	FOREIGN KEY(sessionId)
+<<<<<<< Updated upstream
 		REFERENCES Session(sessionId),
 	Filter VARCHAR(32),
 	PRIMARY KEY(sessionId)
+=======
+		REFERENCES Session,
+	Filter VARCHAR(32)
+>>>>>>> Stashed changes
 );
