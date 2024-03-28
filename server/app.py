@@ -48,3 +48,6 @@ def test_clear_db():
 
     conn.commit()
     return 'Cleared db!'
+
+if __name__ == "__main__":
+    app.run()
