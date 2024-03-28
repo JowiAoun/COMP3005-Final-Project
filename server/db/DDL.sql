@@ -115,9 +115,9 @@ CREATE TABLE EnrolledIn(
 	PRIMARY KEY(memberId,sessionId)
 );
 
-CREATE Filters(
+CREATE TABLE Filters(
 	FOREIGN KEY(sessionId)
-		REFERENCES Session,
+		REFERENCES Session(sessionId),
 	Filter VARCHAR(32),
 	PRIMARY KEY(sessionId)
 );
