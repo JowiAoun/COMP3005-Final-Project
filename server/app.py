@@ -49,5 +49,24 @@ def test_clear_db():
     conn.commit()
     return 'Cleared db!'
 
+@app.route('/heathStats', methods=['GET'])
+def getHealthStats():
+    username = request.args.get('username')
+    try:
+        cursor.execute(
+            """
+            SELECT caloriesBurned, numOfKmRan
+            FROM Members
+            WHERE username = %s;
+            """,
+            (username)
+        )
+        result = cursor.fetchall()
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({'error': e})
+    
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug = True)
