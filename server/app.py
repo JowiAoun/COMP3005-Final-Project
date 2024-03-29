@@ -57,7 +57,25 @@ def getHealthStats():
             """
             SELECT caloriesBurned, numOfKmRan
             FROM Members
-            WHERE username = %s;
+            WHERE username = '%s';
+            """,
+            (username)
+        )
+        result = cursor.fetchall()
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({'error': e})
+    
+@app.route('/heathMetrics', methods=['GET'])
+def getHealthMetrics():
+    username = request.args.get('username')
+    try:
+        cursor.execute(
+            """
+            SELECT age, weight, height, bmi, restingHeartRate, bloodPressure
+            FROM Members
+            WHERE username = '%s';
             """,
             (username)
         )
