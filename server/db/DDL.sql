@@ -15,7 +15,7 @@ CREATE TABLE Members(
 );
 
 CREATE TABLE Trainer(
-	trainer_id SERIAL PRIMARY KEY,
+	trainerId SERIAL PRIMARY KEY,
 	firstName VARCHAR(16) NOT NULL,
 	lastName VARCHAR(16) NOT NULL,
 	username VARCHAR(16) NOT NULL,
@@ -39,8 +39,8 @@ CREATE TABLE Exercises(
 	description TEXT,
 	reps INT NOT NULL DEFAULT 1,
 	sets INT NOT NULL DEFAULT 1,
-	FOREIGN KEY(member_id)
-		REFERENCES Members(member_id)
+	FOREIGN KEY(memberId)
+		REFERENCES Members(memberId)
 );
 
 CREATE TABLE FitnessGoals(
@@ -50,16 +50,17 @@ CREATE TABLE FitnessGoals(
 	type VARCHAR(20) NOT NULL,
 	commitment INT NOT NULL DEFAULT 1,
 	currentPr INT NOT NULL DEFAULT 0,
-	FOREIGN KEY(member_id)
-		REFERENCES Members(member_id)
+	FOREIGN KEY(memberId)
+		REFERENCES Members(memberId)
 	
 );
-
 CREATE TABLE TrainerAvailabilities(
-	Day VARCHAR(10)  
+	Day VARCHAR(10),
+	startTime TIME NOT NULL,
+	endTime TIME NOT NULL,
 	PRIMARY KEY(Day,startTime,endTime)
-	FOREIGN KEY(member_id)
-		REFERENCES Members(member_id)
+	FOREIGN KEY(trainerId)
+		REFERENCES Members(trainerId)
 
 );
 
@@ -67,10 +68,10 @@ CREATE TABLE Bills(
 	invoice_id SERIAL PRIMARY KEY,
 	amount float(2)
 	service VARCHAR(10)
-	FOREIGN KEY(admin_id)
-		REFERENCES Administrators(admin_id)
-	FOREIGN KEY(member_id)
-		REFERENCES Members(member_id)
+	FOREIGN KEY(adminId)
+		REFERENCES Administrators(adminId)
+	FOREIGN KEY(memberId)
+		REFERENCES Members(memberId)
 	
 );
 
