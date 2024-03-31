@@ -1,20 +1,22 @@
 export interface Member {
   memberId: number;
+  username: string;
+  password: string;
   firstName: string;
   lastName: string;
+  membershipType: string;
   healthStatics: HealthStatics;
   healthMetrics: HealthMetrics;
-  fitnessGoals?: [FitnessGoals];
+  fitnessGoals?: FitnessGoals[];
 }
 
 export interface HealthStatics {
   caloriesBurned: number;
-  currentPr: number;
   ran: number;
 }
 
 export interface HealthMetrics {
-  age: number;
+  age: Date;
   weight: number;
   height: number;
   bmi: number;
@@ -26,4 +28,5 @@ export interface FitnessGoals {
   description: string;
   type: string;
   commitment: number;
+  currentPr: number;
 }
