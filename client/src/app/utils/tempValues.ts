@@ -4,15 +4,17 @@ import {Session} from "@/entities/session";
 
 export const tempMember: Member = {
   memberId: 0,
+  username: "JohnDoe111",
+  password: "mypassword222",
   firstName: "John",
   lastName: "Doe",
+  membershipType: "Silver",
   healthStatics: {
     caloriesBurned: 385,
-    currentPr: 10,
     ran: 32,
   },
   healthMetrics: {
-    age: 30,
+    age: new Date(1993, 1, 21),
     weight: 82,
     height: 183,
     bmi: 27,
