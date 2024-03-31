@@ -1,6 +1,14 @@
 SET search_path = "public";
 
+CREATE TABLE test (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(32),
+    hobby VARCHAR(32),
+    age INT
+);
+
 -- DDL
+/*
 CREATE TABLE Members(
 	memberId SERIAL PRIMARY KEY,
 	firstName VARCHAR(16) NOT NULL,
@@ -180,3 +188,4 @@ INSERT INTO Filters(sessionId, filter)
 VALUES (1,'Personal'),
        (2,'Group');
 
+*/
