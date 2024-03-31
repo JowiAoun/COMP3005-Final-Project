@@ -1,4 +1,5 @@
 TODO:
+- Modify phone compatibility in membership page
 - Change website title & description in src/app/layout.tsx
 - Set up local db with compose
 
