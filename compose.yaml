@@ -14,5 +14,18 @@ services:
       context: .
     ports:
       - 8000:8000
-    env_file:
-      - server/.env
+    depends_on:
+      db:
+        condition: service_started
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres123"
+      POSTGRES_DB: "db-comp3005-final-project-local"
+    ports:
+      - 5433:5432
+    volumes:
+      - ./server/sql:/docker-entrypoint-initdb.d
+volumes:
+  db_data:

@@ -3,5 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/server/app.py" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/server/db.py" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/server/sql/init.sql" dialect="PostgreSQL" />
   </component>
 </project>

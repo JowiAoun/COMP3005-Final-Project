@@ -30,7 +30,7 @@ COPY . .
 FROM server as final
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8000 5433 3000
 
 # Define command to start the server
 CMD gunicorn 'server.app:app' --bind=0.0.0.0:8000
