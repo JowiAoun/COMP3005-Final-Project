@@ -8,7 +8,6 @@ CREATE TABLE test (
 );
 
 -- DDL
-/*
 CREATE TABLE Members(
 	memberId SERIAL PRIMARY KEY,
 	firstName VARCHAR(16) NOT NULL,
@@ -78,10 +77,9 @@ CREATE TABLE Bills(
 	amount float(2),
 	service VARCHAR(10),
 	FOREIGN KEY(adminId)
-		REFERENCES Administrators(adminId),
+		REFERENCES Administrator(adminId),
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
-
 );
 
 CREATE TABLE Session(
@@ -95,7 +93,7 @@ CREATE TABLE Session(
 	FOREIGN KEY(trainerId)
 		REFERENCES Trainer(trainerId),
 	FOREIGN KEY(roomNumber)
-		REFERENCES Rooms(roomNumber),
+		REFERENCES Room(roomNumber),
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId)
 );
@@ -187,5 +185,3 @@ VALUES (1,1),
 INSERT INTO Filters(sessionId, filter)
 VALUES (1,'Personal'),
        (2,'Group');
-
-*/
