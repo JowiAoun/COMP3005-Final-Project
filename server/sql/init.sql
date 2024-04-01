@@ -46,6 +46,7 @@ CREATE TABLE Exercises(
 	description TEXT,
 	reps INT NOT NULL DEFAULT 1,
 	sets INT NOT NULL DEFAULT 1,
+	memberId INT,
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 );
@@ -57,6 +58,7 @@ CREATE TABLE FitnessGoals(
 	type VARCHAR(20) NOT NULL,
 	commitment INT NOT NULL DEFAULT 1,
 	currentPr INT NOT NULL DEFAULT 0,
+	memberId INT,
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 
@@ -66,9 +68,10 @@ CREATE TABLE TrainerAvailabilities(
 	Day VARCHAR(10),
 	startTime TIME NOT NULL,
 	endTime TIME NOT NULL,
+	trainerId INT,
 	PRIMARY KEY(Day,startTime,endTime),
 	FOREIGN KEY(trainerId)
-		REFERENCES Members(trainerId)
+		REFERENCES Trainer(trainerId)
 
 );
 
@@ -76,10 +79,20 @@ CREATE TABLE Bills(
 	invoice_id SERIAL PRIMARY KEY,
 	amount float(2),
 	service VARCHAR(10),
+	adminId INT,
+	memberId INT,
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId),
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
+);
+
+
+CREATE TABLE Room(
+	roomNumber INT NOT NULL DEFAULT 1,
+	capacity INT NOT NULL DEFAULT 0,
+	isAvailable BOOLEAN NOT NULL DEFAULT FALSE,
+	PRIMARY KEY(roomNumber)
 );
 
 CREATE TABLE Session(
@@ -90,32 +103,31 @@ CREATE TABLE Session(
 	description TEXT,
 	startDate DATE DEFAULT CURRENT_DATE,
 	endDATE DATE DEFAULT CURRENT_DATE,
+	trainerId INT,
+	roomNumber INT,
+	adminId INT,
 	FOREIGN KEY(trainerId)
-		REFERENCES Trainer(trainerId),
+		REFERENCES Trainer(trainerId), 
 	FOREIGN KEY(roomNumber)
 		REFERENCES Room(roomNumber),
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId)
 );
 
-CREATE TABLE Room(
-	roomNumber INT NOT NULL DEFAULT 1,
-	capacity INT NOT NULL DEFAULT 0,
-	isAvailable BOOLEAN NOT NULL DEFAULT FALSE,
-	PRIMARY KEY(roomNumber),
-	FOREIGN KEY(sessionId)
-		REFERENCES Session(sessionId)
-);
+
 
 CREATE TABLE Equipment(
 	name VARCHAR(30) NOT NULL,
 	status VARCHAR(30) NOT NULL,
+	roomNumber INT,
 	PRIMARY KEY(name),
 	FOREIGN KEY(roomNumber)
 		REFERENCES Room(roomNumber)
 );
 
 CREATE TABLE EnrolledIn(
+	memberId INT,
+	sessionId INT,
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberID),
 	FOREIGN KEY(sessionId)
@@ -124,6 +136,7 @@ CREATE TABLE EnrolledIn(
 );
 
 CREATE TABLE Filters(
+	sessionId INT,
 	FOREIGN KEY(sessionId)
 		REFERENCES Session(sessionId),
 	Filter VARCHAR(32),
