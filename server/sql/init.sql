@@ -78,7 +78,7 @@ CREATE TABLE TrainerAvailabilities(
 CREATE TABLE Bills(
 	invoice_id SERIAL PRIMARY KEY,
 	amount float(2),
-	service VARCHAR(10),
+	service VARCHAR(32),
 	adminId INT,
 	memberId INT,
 	FOREIGN KEY(adminId)
