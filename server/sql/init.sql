@@ -40,16 +40,27 @@ CREATE TABLE Administrator(
 	password VARCHAR(12) NOT NULL
 );
 
-CREATE TABLE Exercises(
-	routineName VARCHAR(30) NOT NULL,
-	name VARCHAR(30) NOT NULL,
+CREATE TABLE Routine(
+	routineName VARCHAR(32) NOT NULL,
 	description TEXT,
-	reps INT NOT NULL DEFAULT 1,
-	sets INT NOT NULL DEFAULT 1,
 	memberId INT,
+	PRIMARY KEY(routineName),
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 );
+
+CREATE TABLE Exercise(
+	exerciseName VARCHAR(32) NOT NULL,
+	sets INT NOT NULL DEFAULT 0,
+	reps INT NOT NULL DEFAULT 0,
+	memberId INT,
+	routineName VARCHAR(32),
+	PRIMARY KEY(exerciseName),
+	FOREIGN KEY(memberId)
+		REFERENCES Members(memberId),
+	FOREIGN KEY(routineName)
+		REFERENCES Routine(routineName)
+)
 
 CREATE TABLE FitnessGoals(
 	goalName VARCHAR(30) PRIMARY KEY,
