@@ -4,7 +4,6 @@ import psycopg
 
 app = Flask(__name__)
 
-cursor = conn.cursor()
 
 @app.route('/', methods=['GET'])
 def hello_world():
