@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
-from server.db import conn
+from server.db import conn, cursor
 import psycopg
 
 app = Flask(__name__)
 
+if __name__ == "__main__":
+    app.run(debug = True)
 
 @app.route('/', methods=['GET'])
 def hello_world():
@@ -85,10 +87,6 @@ def getHealthMetrics():
     
     except Exception as e:
         return jsonify({'error': e})
-    
-
-if __name__ == "__main__":
-    app.run(debug = True)
 
 connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
 cur = connection.cursor()
