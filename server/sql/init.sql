@@ -50,14 +50,12 @@ CREATE TABLE Routine(
 );
 
 CREATE TABLE Exercise(
+	exerciseId SERIAL PRIMARY KEY,
 	exerciseName VARCHAR(32) NOT NULL,
 	sets INT NOT NULL DEFAULT 0,
 	reps INT NOT NULL DEFAULT 0,
-	memberId INT,
 	routineName VARCHAR(32),
-	PRIMARY KEY(exerciseName),
-	FOREIGN KEY(memberId)
-		REFERENCES Members(memberId),
+	PRIMARY KEY(exerciseId),
 	FOREIGN KEY(routineName)
 		REFERENCES Routine(routineName)
 )
