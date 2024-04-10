@@ -279,7 +279,7 @@ def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
     try: 
         cur.execute(""" INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
                         VALUES (%f, %s, %d, %d, %r, %s);                
-                    """,(amount, service, adminId, memberId))
+                    """,(amount, service, adminId, memberId, isPaid, paymentDate))
         connection.commit()
     except psycopg.errors: 
         print("Error adding bill")
