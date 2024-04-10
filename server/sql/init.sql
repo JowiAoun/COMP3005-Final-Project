@@ -175,14 +175,21 @@ INSERT INTO Administrator (firstName, lastName, username, password)
 VALUES ('Stanley', 'Hudson', 'stanley', 'pretzelday'),
        ('Angela', 'Martin', 'angela', 'catlover');
 
+
+INSERT INTO Exercise (exerciseName,sets,reps,routineName)
+VALUES ('Squats', 'Lower body exercise', 12, 3),
+      'Treadmill running','Cardio',20, 1);
+
+
+
+--Initializing the tables that have foreign keys--
+INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
+VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',1,202,1),
+       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12',1,'2024-09-01',203,2);
+
 INSERT INTO Routine (routineName, description, memberId)
-VALUE ('Squats', 'Lower body exercise',1),
+VALUES ('Squats', 'Lower body exercise',1),
       ('Running','Treadmill running',2);
-
-INSERT INTO Exercises (exerciseName,sets,reps,routineName)
-VALUES ('Full Body', 'Squats', 'Lower body exercise', 12, 3,NULL),
-       ('Cardio', 'Running', 'Treadmill running', 20, 1, NULL);
-
 
 
 INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
@@ -197,9 +204,7 @@ INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
 VALUES (50.00, 'Gym Membership', 1, 1,2023-09-01,true),
        (100.00, 'Personal Training', 2, 2,2023-09-01,true);
 
-INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
-VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',202,1),
-       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01',203,2);
+
 
 INSERT INTO Room (roomNumber, capacity, isAvailable, sessionId)
 VALUES (100,20,true,NULL),
