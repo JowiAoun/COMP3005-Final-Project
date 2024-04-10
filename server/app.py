@@ -264,18 +264,22 @@ def getExercises(Routine,memberId):
     except psycopg.errors:
         print("Error getting exercises") 
 
+def getBills(memberId):
+    try:
+        cur.execute("""
+                    SELECT *
+                    FROM BILLS 
+                    WHERE memberId = %d;
+                    """,(memberId))
+        connection.commit()
+    except psycopg.errors:
+        print("Error getting bills") 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
+    try: 
+        cur.execute(""" INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
+                        VALUES (%f, %s, %d, %d, %r, %s);                
+                    """,(amount, service, adminId, memberId))
+        connection.commit()
+    except psycopg.errors: 
+        print("Error adding bill")
