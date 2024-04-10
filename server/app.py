@@ -239,18 +239,25 @@ def login(userName, passWord, userType):
     
 
 def getRoutines(memberId):
-    cur.execute("""
-                SELECT *
-                FROM ROUTINES
-                WHERE memberID = %s
-                """,(memberId))
+    try: 
+        cur.execute("""
+                    SELECT *
+                    FROM ROUTINES
+                    WHERE memberID = %d
+                    """,(memberId))
+    except psycopg.errors:
+        print("Error getting routines")
 
-def getExercises(Routine):
-    cur.execute("""
-                SELECT *
-                FROM EXERCISE 
-                WHERE RoutineName = %s;
-                """,(Routine))
+
+def getExercises(Routine,memberId):
+    try:
+        cur.execute("""
+                    SELECT *
+                    FROM EXERCISE 
+                    WHERE RoutineName = %s AND memberId = %d;
+                    """,(Routine,memberId))
+    except psycopg.errors:
+        print("Error getting exercises") 
 
 
 
