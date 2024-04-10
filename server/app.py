@@ -101,7 +101,8 @@ def getFitnessGoals(member_id):
 
 #When a user wants to choose a new exercise routine
 #Displaying a list of exercise names that the user can choose from
-def getExercises(pageNum):
+'''
+  def getExercises(pageNum):
     startIndex = 5*(pageNum-1)
 
     cur.execute(""" SELECT routineName,name
@@ -109,6 +110,8 @@ def getExercises(pageNum):
                     LIMIT 5 OFFSET %d;
                 """ %(startIndex))
     connection.commit()
+
+'''
 
 #Trainer
 def addTrainerAvailabilites(day,startTime,endTime,trainerId):
@@ -233,6 +236,28 @@ def login(userName, passWord, userType):
                       """, (userType, userName, passWord))
     except psycopg.errors:
         print("Error making the login")
+    
+
+def getRoutines(memberId):
+    cur.execute("""
+                SELECT *
+                FROM ROUTINES
+                WHERE memberID = %s
+                """,(memberId))
+
+def getExercises(Routine):
+    cur.execute("""
+                SELECT *
+                FROM EXERCISE 
+                WHERE RoutineName = %s;
+                """,(Routine))
+
+
+
+
+
+
+
 
 
 
