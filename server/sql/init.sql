@@ -41,10 +41,10 @@ CREATE TABLE Administrator(
 );
 
 CREATE TABLE Routine(
+	routineId SERIAL PRIMARY KEY,
 	routineName VARCHAR(32) NOT NULL,
 	description TEXT,
 	memberId INT,
-	PRIMARY KEY(routineName),
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 );
@@ -54,11 +54,8 @@ CREATE TABLE Exercise(
 	exerciseName VARCHAR(32) NOT NULL,
 	sets INT NOT NULL DEFAULT 0,
 	reps INT NOT NULL DEFAULT 0,
-	routineName VARCHAR(32),
-	PRIMARY KEY(exerciseId),
-	FOREIGN KEY(routineName)
-		REFERENCES Routine(routineName)
-)
+	routineName VARCHAR(32)
+);
 
 CREATE TABLE FitnessGoals(
 	goalName VARCHAR(30) PRIMARY KEY,
@@ -90,6 +87,8 @@ CREATE TABLE Bills(
 	service VARCHAR(32),
 	adminId INT,
 	memberId INT,
+	paymentDate DATE,
+	isPaid BOOLEAN,
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId),
 	FOREIGN KEY(memberId)
@@ -152,6 +151,14 @@ CREATE TABLE Filters(
 	PRIMARY KEY(sessionId)
 );
 
+CREATE TABLE RoutineContains(
+	exerciseId INT,
+	routineId INT,
+	FOREIGN KEY(exerciseId)
+		REFERENCES Exercise(exerciseId),
+	FOREIGN KEY(routineId)
+		REFERENCES Routine(routineId)
+);
 -- DML
 INSERT INTO Members (firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
 VALUES ('John', 'Doe', 30, 180, 70, 25, 70, 1500, 10, 'Gold', 'john_doe', 'password123'),
@@ -168,10 +175,15 @@ INSERT INTO Administrator (firstName, lastName, username, password)
 VALUES ('Stanley', 'Hudson', 'stanley', 'pretzelday'),
        ('Angela', 'Martin', 'angela', 'catlover');
 
+INSERT INTO Routine (routineName, description, memberId)
+VALUE ('Squats', 'Lower body exercise',1),
+      ('Running','Treadmill running',2);
 
-INSERT INTO Exercises (routineName, name, description, reps, sets, memberId)
+INSERT INTO Exercises (exerciseName,sets,reps,routineName)
 VALUES ('Full Body', 'Squats', 'Lower body exercise', 12, 3,NULL),
        ('Cardio', 'Running', 'Treadmill running', 20, 1, NULL);
+
+
 
 INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
 VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
@@ -181,9 +193,9 @@ INSERT INTO TrainerAvailabilities (Day, startTime, endTime, trainerId)
 VALUES ('Monday', '10:00:00', '13:00:00', 1),
        ('Wednesday', '9:00:00', '12:00:00', 2);
 
-INSERT INTO Bills (amount, service, adminId, memberId)
-VALUES (50.00, 'Gym Membership', 1, 1),
-       (100.00, 'Personal Training', 2, 2);
+INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
+VALUES (50.00, 'Gym Membership', 1, 1,2023-09-01,true),
+       (100.00, 'Personal Training', 2, 2,2023-09-01,true);
 
 INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
 VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',202,1),
@@ -207,3 +219,7 @@ VALUES (1,1),
 INSERT INTO Filters(sessionId, filter)
 VALUES (1,'Personal'),
        (2,'Group');
+
+INSERT INTO RoutineContains(exerciseId, routineId) 
+VALUES (1,1),
+       (2,2); 
