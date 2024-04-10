@@ -19,7 +19,7 @@ CREATE TABLE Members(
 	restingHeartRate INT NOT NULL,
 	caloriesBurned INT NOT NULL DEFAULT 0,
 	numOfKm_ran INT DEFAULT 0,
-	membershipType VARCHAR(10) NOT NULL DEFAULT 'None',
+	membershipType VARCHAR(32) NOT NULL DEFAULT 'None',
 	username VARCHAR(16) NOT NULL,
 	password VARCHAR(12) NOT NULL
 );
