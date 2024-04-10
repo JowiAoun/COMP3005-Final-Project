@@ -212,11 +212,13 @@ def updateRoom(roomNumber,sessionId):
 
 ###Change this function
 def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate,membershipType, username, password):
-    cur.execute(""" INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
-                    VALUES (%s,%s,%d,%d,%d,%d,%d,0,0,%s,%s,%s);                
-                """,(firstName, lastName, age, weight, height, bmi, restingHeartRate, membershipType, username, password))
-    connection.commit()
-
+    try: 
+        cur.execute(""" INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
+                        VALUES (%s,%s,%d,%d,%d,%d,%d,0,0,%s,%s,%s);                
+                    """,(firstName, lastName, age, weight, height, bmi, restingHeartRate, membershipType, username, password))
+        connection.commit()
+    except psycopg.errors: 
+        print("Error enrolling member")
 
 def createFitnessGoals(goalName, deadLine, description, type, commitment, currentPr, memberId):
     try:
@@ -234,6 +236,7 @@ def login(userName, passWord, userType):
                         FROM %s
                         WHERE username = %s AND password = %s;
                       """, (userType, userName, passWord))
+        connection.commit()
     except psycopg.errors:
         print("Error making the login")
     
@@ -245,6 +248,7 @@ def getRoutines(memberId):
                     FROM ROUTINES
                     WHERE memberID = %d
                     """,(memberId))
+        connection.commit()
     except psycopg.errors:
         print("Error getting routines")
 
@@ -256,6 +260,7 @@ def getExercises(Routine,memberId):
                     FROM EXERCISE 
                     WHERE RoutineName = %s AND memberId = %d;
                     """,(Routine,memberId))
+        connection.commit()
     except psycopg.errors:
         print("Error getting exercises") 
 
