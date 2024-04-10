@@ -283,3 +283,25 @@ def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
         connection.commit()
     except psycopg.errors: 
         print("Error adding bill")
+        
+def getEquipment(roomNumber):
+    try:
+        cur.execute("""
+                    SELECT *
+                    FROM Equipment 
+                    WHERE roomNumber = %d;
+                    """,(roomNumber))
+        connection.commit()
+    except psycopg.errors:
+        print("Error getting equipment") 
+        
+def updateEquipment(roomNumber, status):
+    try:
+        cur.execute(""" UPDATE Equipment
+                        SET status = %s
+                        WHERE roomNumber = %d;
+                    """,(status, roomNumber))
+        connection.commit()
+
+    except psycopg.errors:
+        print("Error updating status for equipment")
