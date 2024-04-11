@@ -53,8 +53,7 @@ CREATE TABLE Exercise(
 	exerciseId SERIAL PRIMARY KEY,
 	exerciseName VARCHAR(32) NOT NULL,
 	sets INT NOT NULL DEFAULT 0,
-	reps INT NOT NULL DEFAULT 0,
-	routineName VARCHAR(32)
+	reps INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE FitnessGoals(
@@ -180,9 +179,9 @@ VALUES ('Squats', 'Lower body exercise',1),
       ('Running','Treadmill running',2);
 
 
-INSERT INTO Exercise (exerciseName,routineName,sets,reps)
-VALUES ('Squats', 'Lower body exercise', 12, 3),
-      ('Treadmill running','Cardio',20, 1);
+INSERT INTO Exercise (exerciseName,sets,reps)
+VALUES ('Squats',12, 3),
+      ('Treadmill running',20, 1);
 
 INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
 VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
