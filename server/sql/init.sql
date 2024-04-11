@@ -162,12 +162,6 @@ CREATE TABLE RoutineContains(
 		REFERENCES Routine(routineId)
 );
 
-CREATE TABLE SessionSchedule(
-	sessionId INT,
-	day VARCHAR(32),
-	FOREIGN KEY(sessionId)
-		REFERENCES Session(sessionId)
-);
 -- DML
 INSERT INTO Members (firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
 VALUES ('John', 'Doe', 30, 180, 70, 25, 70, 1500, 10, 'Gold', 'john_doe', 'password123'),
@@ -236,7 +230,3 @@ VALUES (1,'Personal'),
 INSERT INTO RoutineContains(exerciseId, routineId) 
 VALUES (1,1),
        (2,2); 
-
-INSERT INTO SessionSchedule(sessionId,day)
-VALUES (1,'Wednesday'),
-       (2,'Monday');	
