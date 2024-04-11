@@ -278,8 +278,50 @@ def getAvailableTrainers(day,startTime):
     except psycopg.errors:
         print("Error getting available trainers")
 
+def createRoutine(routineName,description,memberId):
+    try: 
+        cur.execute("""
+                    INSERT INTO Routine(routienName,description,memberId)
+                    VALUES (%s,%s,%s,%d)
+                    """,(routineName,description,memberId))
+        
+        connection.commit()
+
+    except psycopg.errors:
+        print("Error creating routine")
+
+###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following 
+def createRoutine(routineName,description,memberId,exercises):
+    try: 
+        ###Making the routine
+         cur.execute("""
+                    INSERT INTO Routine(routineName,description,memberId)
+                    VALUES (%s,%s,%s,%d)
+                    """,(routineName,description,memberId))
+        
+         connection.commit()
+
+        ###Getting the routineId of the recently created routine
+         cur.execute("""
+                     SELECT routineId
+                     FROM ROUTINE
+                     WHERE routineName = %s AND memberId = %d; 
+                     """,(routineName,memberId))
+        
+         routineId - cur.fetchone()
 
 
+        ###Adding exercises to the routine
+         for i in range(0,len(exercises)):
+            
+            cur.execute("""
+                        INSERT INTO RoutineContains(exerciseId,routineId)
+                        VALUES (%s,%d);
+                        """,(exercises[i],routineId))
+            connection.commit()
+    except psycopg.errors: 
+        print("Error adding exercises")
+        
 
 
 
