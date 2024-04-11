@@ -175,10 +175,27 @@ INSERT INTO Administrator (firstName, lastName, username, password)
 VALUES ('Stanley', 'Hudson', 'stanley', 'pretzelday'),
        ('Angela', 'Martin', 'angela', 'catlover');
 
+INSERT INTO Routine (routineName, description, memberId)
+VALUES ('Squats', 'Lower body exercise',1),
+      ('Running','Treadmill running',2);
 
-INSERT INTO Exercise (exerciseName,sets,reps,routineName)
+
+INSERT INTO Exercise (exerciseName,routineName,sets,reps)
 VALUES ('Squats', 'Lower body exercise', 12, 3),
-      'Treadmill running','Cardio',20, 1);
+      ('Treadmill running','Cardio',20, 1);
+
+INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
+VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
+       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3, 0, 2);
+
+INSERT INTO TrainerAvailabilities (Day, startTime, endTime, trainerId)
+VALUES ('Monday', '10:00:00', '13:00:00', 1),
+       ('Wednesday', '9:00:00', '12:00:00', 2);
+
+INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
+VALUES (50.00, 'Gym Membership', 1, 1,'2023-09-01',true),
+       (100.00, 'Personal Training', 2, 2,'2023-09-01',true);
+
 INSERT INTO Room (roomNumber, capacity, isAvailable)
 VALUES (100,20,true),
        (302,15,true),
@@ -191,25 +208,6 @@ VALUES (100,20,true),
 INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
 VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',1,202,1),
        ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01',2,203,2);
-
-INSERT INTO Routine (routineName, description, memberId)
-VALUES ('Squats', 'Lower body exercise',1),
-      ('Running','Treadmill running',2);
-
-
-INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
-VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
-       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3, 0, 2);
-
-INSERT INTO TrainerAvailabilities (Day, startTime, endTime, trainerId)
-VALUES ('Monday', '10:00:00', '13:00:00', 1),
-       ('Wednesday', '9:00:00', '12:00:00', 2);
-
-INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
-VALUES (50.00, 'Gym Membership', 1, 1,2023-09-01,true),
-       (100.00, 'Personal Training', 2, 2,2023-09-01,true);
-
-
 
 
 
