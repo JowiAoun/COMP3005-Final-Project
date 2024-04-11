@@ -376,4 +376,21 @@ def addTrainer(trainerId,day,startTime,endTime):
 
     except psycopg.errors:
         print("Error removing trainer") 
-        
+
+@app.route('/getEquipment', methods=['GET'])
+def getEquipment(roomNumber):
+    roomNumber = request.args.get('roomNumber')
+    try:
+        cursor.execute(
+            """
+            SELECT *
+            FROM Equipment
+            WHERE roomNumber = '%d';
+            """,
+            (roomNumber)
+        )
+        result = cursor.fetchall()
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({'error': e})
