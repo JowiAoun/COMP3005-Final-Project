@@ -267,13 +267,15 @@ def getExercises():
 
 
 
-def getAvailableTrainers(day,startTime):
+def getAvailableTrainers(day,startTime,endTime):
     try: 
         cur.execute("""
                     SELECT trainerId
                     FROM TRAINERAVAILABILITIES
-                    WHERE day = (%s) AND startTime = (%d);
-                    """,(day,startTime))
+                    WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s);
+                    """,(day,startTime,endTime))
+        trainers = cur.fetchall()
+        return trainers
 
     except psycopg.errors:
         print("Error getting available trainers")
@@ -348,7 +350,21 @@ def getMembers(memberId):
     except psycopg.errors: 
         print("Error getting members")
 
-
+###Finding all the sessions that start on the same days
+def getAvailableRooms():
+    try: 
+        ###Finding the sessions that occur on the same day 
+        cur.execute("""
+                    SELECT roomNumber,capacity
+                    FROM ROOM
+                    LEFT JOIN SESSION
+                    ON ROOM.roomNumber = SESSION.roomNumber
+                    WHERE (SESSION.day = 'Monday' AND (SESSION.startTime > '10:00:00' OR SESSION.endTime < '9:00:00')) OR SESSION.day IS NULL; 
+                    """)
+        rooms = cur.fetchall()
+        return rooms
+    except psycopg.errors: 
+        print("Error finding the available rooms")
 
 
 
