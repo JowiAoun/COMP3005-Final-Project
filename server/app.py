@@ -171,7 +171,6 @@ def createSession(type,capacity,name,description,startDate,endDate,trainerId,roo
                             LIMIT 1;
                         """)
             recentSession = cur.fetchone()
-            connection.commit()
 
             ##Adding the filters
             addFilters(recentSession,filters)
@@ -365,6 +364,19 @@ def getAvailableRooms():
         return rooms
     except psycopg.errors: 
         print("Error finding the available rooms")
+
+def addTrainer(trainerId,day,startTime,endTime):
+    try:
+        cur.execute("""
+                    DELETE FROM TRAINERAVAILABILITIES
+                    WHERE TRAINERAVAILABILITIES.trainerId = %d AND TRAINERAVAILABILITIES.Day = %s AND TRAINERAVAVAILABILITIES.startTime <= %s AND  TRAINERAVAVAILABILITIES.startTime >= %s 
+                    """,(trainerId,day,startTime,endTime))
+        connection.commit()
+
+    except psycopg.errors:
+        print("Error removing trainer") 
+        
+        
 
 
 
