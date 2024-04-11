@@ -74,6 +74,7 @@ CREATE TABLE TrainerAvailabilities(
 	startTime TIME NOT NULL,
 	endTime TIME NOT NULL,
 	trainerId INT,
+	occupied BOOLEAN,
 	PRIMARY KEY(Day,startTime,endTime),
 	FOREIGN KEY(trainerId)
 		REFERENCES Trainer(trainerId)
@@ -191,9 +192,11 @@ INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, cur
 VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
        ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3, 0, 2);
 
-INSERT INTO TrainerAvailabilities (day, startTime, endTime, trainerId)
-VALUES ('Monday', '10:00:00', '13:00:00', 1),
-       ('Wednesday', '9:00:00', '12:00:00', 2);
+INSERT INTO TrainerAvailabilities (day, startTime, endTime, trainerId,occupied)
+VALUES ('Monday', '10:00:00', '13:00:00', 1,true),
+       ('Tuesday', '9:00:00', '11:00:00', 1,false),
+       ('Wednesday', '9:00:00', '12:00:00', 2,true),
+       ('Friday', '15:00:00', '18:00:00', 1,true);
 
 INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
 VALUES (50.00, 'Gym Membership', 1, 1,'2023-09-01',true),
