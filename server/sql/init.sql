@@ -179,13 +179,18 @@ VALUES ('Stanley', 'Hudson', 'stanley', 'pretzelday'),
 INSERT INTO Exercise (exerciseName,sets,reps,routineName)
 VALUES ('Squats', 'Lower body exercise', 12, 3),
       'Treadmill running','Cardio',20, 1);
+INSERT INTO Room (roomNumber, capacity, isAvailable)
+VALUES (100,20,true),
+       (302,15,true),
+       (202,14,true),
+       (203,20,false);
 
 
 
 --Initializing the tables that have foreign keys--
 INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
 VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',1,202,1),
-       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12',1,'2024-09-01',203,2);
+       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01',2,203,2);
 
 INSERT INTO Routine (routineName, description, memberId)
 VALUES ('Squats', 'Lower body exercise',1),
@@ -206,11 +211,7 @@ VALUES (50.00, 'Gym Membership', 1, 1,2023-09-01,true),
 
 
 
-INSERT INTO Room (roomNumber, capacity, isAvailable, sessionId)
-VALUES (100,20,true,NULL),
-       (302,15,true,NULL),
-       (202,14,true,1),
-       (203,20,false,2);
+
 
 INSERT INTO Equipment(name, status, roomNumber)
 VALUES ('Dumbbell rack','available',202),
