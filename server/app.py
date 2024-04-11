@@ -386,3 +386,15 @@ def getEquipment(roomNumber):
     
     except Exception as e:
         return jsonify({'error': e})
+    
+@app.route('/updateEquipment', methods=['PUT'])
+def updateEquipment(status, roomNumber):
+    try:
+        cur.execute(""" UPDATE Equipment
+                        SET status = %s
+                        WHERE roomNumber=%d;
+                    """,(status, roomNumber))
+        connection.commit()
+
+    except psycopg.errors:
+        print("Error updating status for equipment")
