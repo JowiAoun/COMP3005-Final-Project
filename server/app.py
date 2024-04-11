@@ -266,13 +266,13 @@ def getExercises():
 
 
 
-def getAvailableTrainers(day,startTime,endTime, occupied):
+def getAvailableTrainers(day,startTime,endTime):
     try: 
         cur.execute("""
                     SELECT trainerId
                     FROM TRAINERAVAILABILITIES
                     WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s) AND occupied = False;
-                    """,(day,startTime,endTime, occupied))
+                    """,(day,startTime,endTime))
         trainers = cur.fetchall()
         return trainers
 
@@ -370,7 +370,7 @@ def addTrainer(trainerId,day,startTime,endTime):
         cur.execute("""
                     UPDATE TRAINERAVAILABILITIES
                     SET TRAINERAVAILABILITIES.occupied = true
-                    WHERE TRAINERAVAILABILITIES.trainerId = %d AND TRAINERAVAILABILITIES.Day = %s AND TRAINERAVAVAILABILITIES.startTime <= %s AND  TRAINERAVAVAILABILITIES.startTime >= %s 
+                    WHERE TRAINERAVAILABILITIES.trainerId = %d AND TRAINERAVAILABILITIES.Day = %s AND TRAINERAVAILABILITIES.endTime <= %s AND  TRAINERAVAILABILITIES.startTime >= %s 
                     """,(trainerId,day,startTime,endTime))
         connection.commit()
 
