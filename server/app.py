@@ -52,7 +52,7 @@ def test_clear_db():
     conn.commit()
     return 'Cleared db!'
 
-@app.route('/heathStats', methods=['GET'])
+@app.route('/getHeathStats', methods=['GET'])
 def getHealthStats():
     username = request.args.get('username')
     try:
@@ -69,8 +69,8 @@ def getHealthStats():
     
     except Exception as e:
         return jsonify({'error': e})
-    
-@app.route('/heathMetrics', methods=['GET'])
+
+@app.route('/getHeathMetrics', methods=['GET'])
 def getHealthMetrics():
     username = request.args.get('username')
     try:
@@ -91,6 +91,7 @@ def getHealthMetrics():
 connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
 cur = connection.cursor()
 
+@app.route('/getFitnessGoals', methods=['GET'])
 def getFitnessGoals(member_id):
     cur.execute(""" SELECT goalName
                     FROM FitnessGoals
@@ -113,6 +114,7 @@ def getFitnessGoals(member_id):
 
 '''
 
+@app.route('/addTrainerAvailabilites', methods=['POST'])
 #Trainer
 def addTrainerAvailabilites(day,startTime,endTime,trainerId):
     try:
@@ -122,8 +124,7 @@ def addTrainerAvailabilites(day,startTime,endTime,trainerId):
     except psycopg.errors.UniqueViolation:
         print("availability already exists")
 
-
-
+@app.route('/updateTrainerAvailabilites', methods=['PUT'])
 def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId):
     try:
         cur.execute(""" UPDATE TrainerAvailabilities
@@ -137,6 +138,7 @@ def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId):
 
 ###Adminstrator
 
+@app.route('/addFilters', methods=['POST'])
 ##Add functionality to retreive created session to add the filters.
 def addFilters(filters,sessionId):
     ###Iterating through the filters array to add the filters to a given session.
@@ -144,8 +146,8 @@ def addFilters(filters,sessionId):
         cur.execute(""" INSERT INTO Filters(sessionId, filter) VALUES (%d,%s); 
                     """,(sessionId,filters[i]))
         connection.commit()
-
-
+        
+@app.route('/createSession', methods=['POST'])
 def createSession(type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId,filters):
 
     ###Getting the trainer
@@ -179,10 +181,8 @@ def createSession(type,capacity,name,description,startDate,endDate,trainerId,roo
             print("Error inserting session")
     else:
         print("The trainer does not exist")
-
-
-
-
+        
+@app.route('/updateSession', methods=['PUT'])
 def updateSession(name,description,startDate,endDate,trainerId,roomNumber,sessionId):
     try:
         cur.execute(""" UPDATE Session
@@ -192,7 +192,7 @@ def updateSession(name,description,startDate,endDate,trainerId,roomNumber,sessio
     except psycopg.errors:
         print("Error inserting session")
 
-
+@app.route('/updateRoom', methods=['PUT'])
 ##Check this out and change the function
 def updateRoom(roomNumber,sessionId):
     try:
@@ -209,6 +209,7 @@ def updateRoom(roomNumber,sessionId):
 
 ###Members
 
+@app.route('/enrollMember', methods=['POST'])
 ###Change this function
 def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate,membershipType, username, password):
     try: 
@@ -219,6 +220,7 @@ def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate
     except psycopg.errors: 
         print("Error enrolling member")
 
+@app.route('/createFitnessGoals', methods=['POST'])
 def createFitnessGoals(goalName, deadLine, description, type, commitment, currentPr, memberId):
     try:
         cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d,%d);
@@ -227,6 +229,7 @@ def createFitnessGoals(goalName, deadLine, description, type, commitment, curren
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
 
+@app.route('/login', methods=['GET'])
 ###General
 def login(userName, passWord, userType):
     ###Checking if there exists a user with the given username and password
@@ -239,7 +242,7 @@ def login(userName, passWord, userType):
     except psycopg.errors:
         print("Error making the login")
     
-
+@app.route('/getRoutines', methods=['GET'])
 def getRoutines(memberId):
     try: 
         cur.execute("""
@@ -251,7 +254,7 @@ def getRoutines(memberId):
     except psycopg.errors:
         print("Error getting routines")
 
-
+@app.route('/getExercises', methods=['GET'])
 def getExercises():
     try:
         cur.execute("""
@@ -262,10 +265,7 @@ def getExercises():
     except psycopg.errors:
         print("Error getting exercises") 
 
-
-
-
-
+@app.route('/getAvailableTrainers', methods=['GET'])
 def getAvailableTrainers(day,startTime,endTime):
     try: 
         cur.execute("""
@@ -279,18 +279,7 @@ def getAvailableTrainers(day,startTime,endTime):
     except psycopg.errors:
         print("Error getting available trainers")
 
-def createRoutine(routineName,description,memberId):
-    try: 
-        cur.execute("""
-                    INSERT INTO Routine(routienName,description,memberId)
-                    VALUES (%s,%s,%s,%d)
-                    """,(routineName,description,memberId))
-        
-        connection.commit()
-
-    except psycopg.errors:
-        print("Error creating routine")
-
+@app.route('/createRoutine', methods=['POST'])
 ###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following 
 def createRoutine(routineName,description,memberId,exercises):
     try: 
@@ -323,6 +312,7 @@ def createRoutine(routineName,description,memberId,exercises):
     except psycopg.errors: 
         print("Error adding exercises")
 
+@app.route('/memberSearch', methods=['GET'])
 ###Function performing a search for specific members
 def memberSearch(searchTerm):
     try: 
@@ -336,7 +326,7 @@ def memberSearch(searchTerm):
     except psycopg.errors:
         print("Error searching for members") 
 
-
+@app.route('/getMembers', methods=['GET'])
 def getMembers(memberId):
     try: 
         cur.execute("""
@@ -349,6 +339,7 @@ def getMembers(memberId):
     except psycopg.errors: 
         print("Error getting members")
 
+@app.route('/getAvailableRooms', methods=['GET'])
 ###Finding all the sessions that start on the same days
 def getAvailableRooms():
     try: 
@@ -365,6 +356,7 @@ def getAvailableRooms():
     except psycopg.errors: 
         print("Error finding the available rooms")
 
+@app.route('/addTrainer', methods=['POST'])
 def addTrainer(trainerId,day,startTime,endTime):
     try:
         cur.execute("""
