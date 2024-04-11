@@ -92,7 +92,7 @@ connection = psycopg.connect("dbname=finalproject user=postgres host=localhost p
 cur = connection.cursor()
 
 def getFitnessGoals(member_id):
-    cur.execute(""" SELECT routineName
+    cur.execute(""" SELECT goalName
                     FROM FitnessGoals
                     WHERE memberId = %d;
             
@@ -268,8 +268,16 @@ def getExercises(Routine,memberId):
 
 
 
+def getAvailableTrainers(day,startTime):
+    try: 
+        cur.execute("""
+                    SELECT name
+                    FROM TRAINER
+                    WHERE day = (%s) AND startTime = (%d);
+                    """,(day,startTime))
 
-
+    except psycopg.errors:
+        print("Error getting available trainers")
 
 
 
