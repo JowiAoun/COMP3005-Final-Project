@@ -19,7 +19,7 @@ CREATE TABLE Members(
 	restingHeartRate INT NOT NULL,
 	caloriesBurned INT NOT NULL DEFAULT 0,
 	numOfKm_ran INT DEFAULT 0,
-	membershipType VARCHAR(10) NOT NULL DEFAULT 'None',
+	membershipType VARCHAR(32) NOT NULL DEFAULT 'None',
 	username VARCHAR(16) NOT NULL,
 	password VARCHAR(12) NOT NULL
 );
@@ -41,10 +41,10 @@ CREATE TABLE Administrator(
 );
 
 CREATE TABLE Routine(
+	routineId SERIAL PRIMARY KEY,
 	routineName VARCHAR(32) NOT NULL,
 	description TEXT,
 	memberId INT,
-	PRIMARY KEY(routineName),
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 );
@@ -53,12 +53,8 @@ CREATE TABLE Exercise(
 	exerciseId SERIAL PRIMARY KEY,
 	exerciseName VARCHAR(32) NOT NULL,
 	sets INT NOT NULL DEFAULT 0,
-	reps INT NOT NULL DEFAULT 0,
-	routineName VARCHAR(32),
-	PRIMARY KEY(exerciseId),
-	FOREIGN KEY(routineName)
-		REFERENCES Routine(routineName)
-)
+	reps INT NOT NULL DEFAULT 0
+);
 
 CREATE TABLE FitnessGoals(
 	goalName VARCHAR(30) PRIMARY KEY,
@@ -90,6 +86,8 @@ CREATE TABLE Bills(
 	service VARCHAR(32),
 	adminId INT,
 	memberId INT,
+	paymentDate DATE,
+	isPaid BOOLEAN,
 	FOREIGN KEY(adminId)
 		REFERENCES Administrator(adminId),
 	FOREIGN KEY(memberId)
@@ -152,6 +150,14 @@ CREATE TABLE Filters(
 	PRIMARY KEY(sessionId)
 );
 
+CREATE TABLE RoutineContains(
+	exerciseId INT,
+	routineId INT,
+	FOREIGN KEY(exerciseId)
+		REFERENCES Exercise(exerciseId),
+	FOREIGN KEY(routineId)
+		REFERENCES Routine(routineId)
+);
 -- DML
 INSERT INTO Members (firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
 VALUES ('John', 'Doe', 30, 180, 70, 25, 70, 1500, 10, 'Gold', 'john_doe', 'password123'),
@@ -168,10 +174,14 @@ INSERT INTO Administrator (firstName, lastName, username, password)
 VALUES ('Stanley', 'Hudson', 'stanley', 'pretzelday'),
        ('Angela', 'Martin', 'angela', 'catlover');
 
+INSERT INTO Routine (routineName, description, memberId)
+VALUES ('Squats', 'Lower body exercise',1),
+      ('Running','Treadmill running',2);
 
-INSERT INTO Exercises (routineName, name, description, reps, sets, memberId)
-VALUES ('Full Body', 'Squats', 'Lower body exercise', 12, 3,NULL),
-       ('Cardio', 'Running', 'Treadmill running', 20, 1, NULL);
+
+INSERT INTO Exercise (exerciseName,sets,reps)
+VALUES ('Squats',12, 3),
+      ('Treadmill running',20, 1);
 
 INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, currentPr, memberId)
 VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3, 0, 1),
@@ -181,19 +191,24 @@ INSERT INTO TrainerAvailabilities (Day, startTime, endTime, trainerId)
 VALUES ('Monday', '10:00:00', '13:00:00', 1),
        ('Wednesday', '9:00:00', '12:00:00', 2);
 
-INSERT INTO Bills (amount, service, adminId, memberId)
-VALUES (50.00, 'Gym Membership', 1, 1),
-       (100.00, 'Personal Training', 2, 2);
+INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
+VALUES (50.00, 'Gym Membership', 1, 1,'2023-09-01',true),
+       (100.00, 'Personal Training', 2, 2,'2023-09-01',true);
 
+INSERT INTO Room (roomNumber, capacity, isAvailable)
+VALUES (100,20,true),
+       (302,15,true),
+       (202,14,true),
+       (203,20,false);
+
+
+
+--Initializing the tables that have foreign keys--
 INSERT INTO Session (type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId)
-VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',202,1),
-       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01',203,2);
+VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01',1,202,1),
+       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01',2,203,2);
 
-INSERT INTO Room (roomNumber, capacity, isAvailable, sessionId)
-VALUES (100,20,true,NULL),
-       (302,15,true,NULL),
-       (202,14,true,1),
-       (203,20,false,2);
+
 
 INSERT INTO Equipment(name, status, roomNumber)
 VALUES ('Dumbbell rack','available',202),
@@ -207,3 +222,7 @@ VALUES (1,1),
 INSERT INTO Filters(sessionId, filter)
 VALUES (1,'Personal'),
        (2,'Group');
+
+INSERT INTO RoutineContains(exerciseId, routineId) 
+VALUES (1,1),
+       (2,2); 

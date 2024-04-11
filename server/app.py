@@ -116,7 +116,7 @@ def getFitnessGoals(member_id):
 #Trainer
 def addTrainerAvailabilites(day,startTime,endTime,trainerId):
     try:
-        cur.execute(""" INSERT INTO TrainerAvailabilities VALUES (%s,%s,%s,%s,%d);
+        cur.execute(""" INSERT INTO TrainerAvailabilities VALUES (%s,%s,%s,%d);
                     """,(day, startTime, endTime, trainerId))
 
     except psycopg.errors.UniqueViolation:
@@ -128,8 +128,8 @@ def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId):
     try:
         cur.execute(""" UPDATE TrainerAvailabilities
                         SET day = %s, startTime = %s, endTime = %s
-                        WHERE trainerId = %d;
-                    """,(newDay,newStartTime,newEndTime,trainerId))
+                        WHERE trainerId = %d AND day = %s AND startTime = %s;
+                    """,(newDay,newStartTime,newEndTime,trainerId,newDay,startTime))
         connection.commit()
 
     except psycopg.errors:
@@ -245,21 +245,20 @@ def getRoutines(memberId):
     try: 
         cur.execute("""
                     SELECT *
-                    FROM ROUTINES
-                    WHERE memberID = %d
+                    FROM ROUTINE
+                    WHERE memberID = %d;
                     """,(memberId))
         connection.commit()
     except psycopg.errors:
         print("Error getting routines")
 
 
-def getExercises(Routine,memberId):
+def getExercises():
     try:
         cur.execute("""
                     SELECT *
-                    FROM EXERCISE 
-                    WHERE RoutineName = %s AND memberId = %d;
-                    """,(Routine,memberId))
+                    FROM EXERCISE;
+                    """)
         connection.commit()
     except psycopg.errors:
         print("Error getting exercises") 
@@ -271,8 +270,8 @@ def getExercises(Routine,memberId):
 def getAvailableTrainers(day,startTime):
     try: 
         cur.execute("""
-                    SELECT name
-                    FROM TRAINER
+                    SELECT trainerId
+                    FROM TRAINERAVAILABILITIES
                     WHERE day = (%s) AND startTime = (%d);
                     """,(day,startTime))
 
