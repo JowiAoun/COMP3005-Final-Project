@@ -108,6 +108,7 @@ CREATE TABLE Session(
 	capacity INT,
 	name VARCHAR(30),
 	description TEXT,
+	day VARCHAR(32),
 	startDate DATE DEFAULT CURRENT_DATE,
 	endDATE DATE DEFAULT CURRENT_DATE,
 	startTIME TIME,
@@ -213,9 +214,9 @@ VALUES (100,20,true),
 
 
 --Initializing the tables that have foreign keys--
-INSERT INTO Session (type,capacity,name,description,startDate,endDate,startTime,endTime,trainerId,roomNumber,adminId)
-VALUES ('Personal', 1, 'Training Session', 'Simple training session','2024-09-01','2024-10-01','10:00:00','12:00:00',1,202,1),
-       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','2024-08-12','2024-09-01','9:00:00','10:00:00',2,203,2);
+INSERT INTO Session (type,capacity,name,description,day,startDate,endDate,startTime,endTime,trainerId,roomNumber,adminId)
+VALUES ('Personal', 1, 'Training Session', 'Simple training session','Wednesday','2024-09-01','2024-10-01','10:00:00','12:00:00',1,202,1),
+       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','Monday','2024-08-12','2024-09-01','9:00:00','10:00:00',2,203,2);
 
 
 
