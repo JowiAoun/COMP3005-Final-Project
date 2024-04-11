@@ -321,7 +321,32 @@ def createRoutine(routineName,description,memberId,exercises):
             connection.commit()
     except psycopg.errors: 
         print("Error adding exercises")
-        
+
+###Function performing a search for specific members
+def memberSearch(searchTerm):
+    try: 
+        cur.execute("""
+                    SELECT memberId,firstName,lastName
+                    FROM MEMBERS
+                    WHERE POSITION(%s IN firstName)>0 OR POSITION(%s IN lastName)>0;
+                    """)
+        result = cur.fetchall()
+
+    except psycopg.errors:
+        print("Error searching for members") 
+
+
+def getMembers(memberId):
+    try: 
+        cur.execute("""
+                    SELECT *
+                    FROM MEMBERS
+                    WHERE memberId = %d;
+                    """,(memberId))
+        result = cur.fetchall()
+
+    except psycopg.errors: 
+        print("Error getting members")
 
 
 
