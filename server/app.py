@@ -266,13 +266,13 @@ def getExercises():
 
 
 
-def getAvailableTrainers(day,startTime,endTime):
+def getAvailableTrainers(day,startTime,endTime, occupied):
     try: 
         cur.execute("""
                     SELECT trainerId
                     FROM TRAINERAVAILABILITIES
-                    WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s);
-                    """,(day,startTime,endTime))
+                    WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s) AND occupied = False;
+                    """,(day,startTime,endTime, occupied))
         trainers = cur.fetchall()
         return trainers
 
@@ -368,7 +368,8 @@ def getAvailableRooms():
 def addTrainer(trainerId,day,startTime,endTime):
     try:
         cur.execute("""
-                    DELETE FROM TRAINERAVAILABILITIES
+                    UPDATE TRAINERAVAILABILITIES
+                    SET TRAINERAVAILABILITIES.occupied = true
                     WHERE TRAINERAVAILABILITIES.trainerId = %d AND TRAINERAVAILABILITIES.Day = %s AND TRAINERAVAVAILABILITIES.startTime <= %s AND  TRAINERAVAVAILABILITIES.startTime >= %s 
                     """,(trainerId,day,startTime,endTime))
         connection.commit()
@@ -376,8 +377,3 @@ def addTrainer(trainerId,day,startTime,endTime):
     except psycopg.errors:
         print("Error removing trainer") 
         
-        
-
-
-
-
