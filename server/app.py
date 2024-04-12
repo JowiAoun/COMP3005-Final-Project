@@ -93,24 +93,36 @@ def getHealthMetrics(memberId):
             row_data = dict(zip(columns, row))
             data.append(row_data)
         return jsonify(data)
-    
+
     except Exception as e:
         return jsonify({'error': str(e)})
 
 
+@app.route("/getFitnessGoals/<int:memberId>", methods=["GET"])
+def getFitnessGoals(memberId):
+    try:
+        cur.execute(
+            """ SELECT goalName
+                        FROM FitnessGoals
+                        WHERE memberId = %s;
+                
+                    """
+            % (memberId)
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 
-@app.route('/getFitnessGoals/<memberId>', methods=['GET'])
-def getFitnessGoals(member_id):
-    cur.execute(""" SELECT goalName
-                    FROM FitnessGoals
-                    WHERE memberId = %d;
-            
-                """ % (member_id))
-    connection.commit()
-
-#When a user wants to choose a new exercise routine
-#Displaying a list of exercise names that the user can choose from
+# When a user wants to choose a new exercise routine
+# Displaying a list of exercise names that the user can choose from
 '''
   def getExercises(pageNum):
     startIndex = 5*(pageNum-1)
@@ -123,155 +135,337 @@ def getFitnessGoals(member_id):
 
 '''
 
-@app.route('/addTrainerAvailabilites', methods=['POST'])
-#Trainer
-def addTrainerAvailabilites(day,startTime,endTime,trainerId):
+
+@app.route("/addTrainerAvailabilites/<int:trainerId>", methods=["POST"])
+# Trainer
+def addTrainerAvailabilites(trainerId):
     try:
-        cur.execute(""" INSERT INTO TrainerAvailabilities VALUES (%s,%s,%s,%d);
-                    """,(day, startTime, endTime, trainerId))
+        data = request.json
+        if "day" in data and "startTime" in data and "endTime" in data:
+            day = data["day"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+        cur.execute(
+            """ INSERT INTO TrainerAvailabilities(day, startTime, endTime, trainerId, occupied) VALUES (%s,%s,%s,%s, %s);
+                    """,
+            (day, startTime, endTime, trainerId, "False"),
+        )
+        connection.commit()
+        return jsonify(data)
 
     except psycopg.errors.UniqueViolation:
         print("availability already exists")
 
-@app.route('/updateTrainerAvailabilites', methods=['PUT'])
-def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId, startTime):
+
+@app.route("/updateTrainerAvailabilites/<int:trainerId>", methods=["PUT"])
+def updateTrainerAvailabilites(trainerId):
     try:
-        cur.execute(""" UPDATE TrainerAvailabilities
+        data = request.json
+        if (
+            "newDay" in data
+            and "newStartTime" in data
+            and "newEndTime" in data
+            and "day" in data
+            and "startTime" in data
+            and "endTime" in data
+        ):
+            newDay = data["newDay"]
+            newStartTime = data["newStartTime"]
+            newEndTime = data["newEndTime"]
+            day = data["day"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+        cur.execute(
+            """ UPDATE TrainerAvailabilities
                         SET day = %s, startTime = %s, endTime = %s
-                        WHERE trainerId = %d AND day = %s AND startTime = %s;
-                    """,(newDay,newStartTime,newEndTime,trainerId,newDay,startTime))
+                        WHERE trainerId = %s AND day = %s AND startTime = %s AND endTime = %s;
+                    """,
+            (newDay, newStartTime, newEndTime, trainerId, day, startTime, endTime),
+        )
         connection.commit()
+        return jsonify(data)
 
     except psycopg.errors:
         print("Error updating availabilities for trainer")
 
+
 ###Adminstrator
 
-@app.route('/addFilters', methods=['POST'])
-##Add functionality to retreive created session to add the filters.
-def addFilters(filters,sessionId):
-    ###Iterating through the filters array to add the filters to a given session.
-    for i in range(0,len(filters)):
-        cur.execute(""" INSERT INTO Filters(sessionId, filter) VALUES (%d,%s); 
-                    """,(sessionId,filters[i]))
-        connection.commit()
-        
+# @app.route('/addFilters', methods=['POST'])
+# ##Add functionality to retreive created session to add the filters.
+# def addFilters(filters,sessionId):
+#     ###Iterating through the filters array to add the filters to a given session.
+#     for i in range(0,len(filters)):
+#         cur.execute(""" INSERT INTO Filters(sessionId, filter) VALUES (%d,%s);
+#                     """,(sessionId,filters[i]))
+#         connection.commit()
+
+
 @app.route('/createSession', methods=['POST'])
-def createSession(type,capacity,name,description,startDate,endDate,trainerId,roomNumber,adminId,filters):
-
-    ###Getting the trainer
-    cur.execute(""" SELECT firstName
-                        FROM TRAINER
-                        WHERE trainerId = %d;
-                    """, (trainerId))
-    result = cur.fetchall()
-    connection.commit()
-
-    if (len(result) > 0):
-        try:
-
-            cur.execute(""" INSERT INTO Session (type, capacity, name, description, startDate, endDate, trainerId, roomNumber, adminId) VALUES (%s,%d,%s,%s,%d,%d.%d);
-                               """, (type, capacity, name, description, startDate, endDate, trainerId, roomNumber, adminId))
-            connection.commit()
-
-            ###Retreiving the recently added tuple
-
-            cur.execute(""" SELECT sessionId
-                            FROM Session
-                            ORDER BY sessionId DESC
-                            LIMIT 1;
-                        """)
-            recentSession = cur.fetchone()
-
-            ##Adding the filters
-            addFilters(recentSession,filters)
-
-        except psycopg.errors:
-            print("Error inserting session")
-    else:
-        print("The trainer does not exist")
-        
-@app.route('/updateSession', methods=['PUT'])
-def updateSession(name,description,startDate,endDate,trainerId,roomNumber,sessionId):
+def createSession():
     try:
-        cur.execute(""" UPDATE Session
-                        SET name = %s, description = %s, startDate = %s, endDate = %s, trainerId = %d, roomNumber = %d
-                        WHERE sessionId = %d;
-                    """,(name,description,startDate,endDate,trainerId,roomNumber,sessionId))
+        data = request.json
+        if (
+            "type" in data
+            and "capacity" in data
+            and "name" in data
+            and "description" in data
+            and "day" in data
+            and "startDate" in data
+            and "endDate" in data
+            and "startTime" in data
+            and "endTime" in data
+            and "trainerId" in data
+            and "roomNumber" in data
+            and "adminId" in data
+        ):
+            type = data["type"]
+            capacity = data["capacity"]
+            name = data["name"]
+            description = data["description"]
+            day = data["day"]
+            startDate = data["startDate"]
+            endDate = data["endDate"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+            trainerId = data["trainerId"]
+            roomNumber = data["roomNumber"]
+            adminId = data["adminId"]
+        cur.execute(
+            """ INSERT INTO Session (type, capacity, name, description, day, startDate, endDate, startTime, endTime, trainerId, roomNumber, adminId) VALUES (%s,%s,%s,%s,%s,%s,%s, %s, %s, %s, %s, %s);
+                            """,
+            (
+                type,
+                capacity,
+                name,
+                description,
+                day,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                trainerId,
+                roomNumber,
+                adminId,
+            ),
+        )
+        connection.commit()
+        return jsonify(data)
+
     except psycopg.errors:
         print("Error inserting session")
 
-@app.route('/updateRoom', methods=['PUT'])
-##Check this out and change the function
-def updateRoom(roomNumber,sessionId):
-    try:
-        #Retri
 
-        #Updating the room availability
-        cur.execute(""" UPDATE Session
-                        SET roomNumber = %d
-                        WHERE sessionId = %d;
-                    """,(roomNumber,sessionId))
+@app.route("/updateSession/<int:sessionId>", methods=["PUT"])
+def updateSession(sessionId):
+    try:
+        data = request.json
+        if (
+            "type" in data
+            and "capacity" in data
+            and "name" in data
+            and "description" in data
+            and "day" in data
+            and "startDate" in data
+            and "endDate" in data
+            and "startTime" in data
+            and "endTime" in data
+            and "trainerId" in data
+            and "roomNumber" in data
+            and "adminId" in data
+        ):
+            type = data["type"]
+            capacity = data["capacity"]
+            name = data["name"]
+            description = data["description"]
+            day = data["day"]
+            startDate = data["startDate"]
+            endDate = data["endDate"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+            trainerId = data["trainerId"]
+            roomNumber = data["roomNumber"]
+            adminId = data["adminId"]
+            # run the available rooms function
+        cur.execute(
+            """ UPDATE Session
+                        SET type = %s, capacity = %s, name = %s, description = %s, day = %s, startDate = %s, endDate = %s, startTime = %s, endTime = %s, trainerId = %s, roomNumber = %s, adminId = %s
+                        WHERE sessionId = %s;
+                    """,
+            (
+                type,
+                capacity,
+                name,
+                description,
+                day,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                trainerId,
+                roomNumber,
+                adminId,
+                sessionId,
+            ),
+        )
         connection.commit()
+        return jsonify(data)
+    except psycopg.errors:
+        print("Error inserting session")
+
+
+@app.route("/updateRoom/<int:sessionId>", methods=["PUT"])
+##Check this out and change the function
+def updateRoom(sessionId):
+    try:
+        data = request.json
+        if "roomNumber" in data:
+            roomNumber = data["roomNumber"]
+        # Updating the room availability
+        cur.execute(
+            """ UPDATE Session
+                        SET roomNumber = %s
+                        WHERE sessionId = %s;
+                    """,
+            (roomNumber, sessionId),
+        )
+        connection.commit()
+        return jsonify(data)
     except psycopg.errors:
         print("Error updating the room")
 
+
 ###Members
+
 
 @app.route('/enrollMember', methods=['POST'])
 ###Change this function
-def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate,membershipType, username, password):
+def enrollMember():
     try: 
-        cur.execute(""" INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
-                        VALUES (%s,%s,%d,%d,%d,%d,%d,0,0,%s,%s,%s);                
-                    """,(firstName, lastName, age, weight, height, bmi, restingHeartRate, membershipType, username, password))
+        data = request.json
+        if (
+            "firstName" in data
+            and "lastName" in data
+            and "age" in data
+            and "weight" in data
+            and "height" in data
+            and "bmi" in data
+            and "restingHeartRate" in data
+            and "membershipType" in data
+            and "username" in data
+            and "password" in data
+        ):
+            firstName = data["firstName"]
+            lastName = data["lastName"]
+            age = data["age"]
+            weight = data["weight"]
+            height = data["height"]
+            bmi = data["bmi"]
+            restingHeartRate = data["restingHeartRate"]
+            membershipType = data["membershipType"]
+            username = data["username"]
+            password = data["password"]
+        cur.execute(
+            """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,0,0,%s,%s,%s);                
+                    """,
+            (
+                firstName,
+                lastName,
+                age,
+                weight,
+                height,
+                bmi,
+                restingHeartRate,
+                membershipType,
+                username,
+                password,
+            ),
+        )
         connection.commit()
+        return jsonify(data)
     except psycopg.errors: 
         print("Error enrolling member")
 
-@app.route('/createFitnessGoals', methods=['POST'])
-def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId,completed):
+
+@app.route("/createFitnessGoals/<int:memberId>", methods=["POST"])
+def createFitnessGoals(memberId):
     try:
-        cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d,%r);
-                    """,(goalName, deadLine, description, type, commitment, memberId,False))
+        data = request.json
+        if (
+            "goalName" in data
+            and "deadLine" in data
+            and "description" in data
+            and "type" in data
+            and "commitment" in data
+        ):
+            goalName = data["goalName"]
+            deadLine = data["deadLine"]
+            description = data["description"]
+            type = data["type"]
+            commitment = data["commitment"]
+        cur.execute(
+            """ INSERT INTO FitnessGoals(goalName, deadLine, description, type, commitment, memberId, completed) VALUES (%s,%s,%s,%s,%s,%s,%s);
+                    """,
+            (goalName, deadLine, description, type, commitment, memberId, "False"),
+        )
         connection.commit()
+        return jsonify(data)
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
 
-def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId):
-    try:
-        cur.execute(""" UPDATE FitnessGoals 
-                        SET goalName = %s, deadLine = %s, description = %s, type= %s, commitment = %d, memberId = %d);
-                    """,(goalName, deadLine, description, type, commitment, memberId))
-        connection.commit()
-    except psycopg.errors.UniqueViolation:
-        print("Goal already exists for this user")
 
-@app.route('/login', methods=['GET'])
+@app.route("/login/", methods=["POST"])
 ###General
-def login(userName, passWord, userType):
+def login():
     ###Checking if there exists a user with the given username and password
     try:
-        cur.execute(""" SELECT *
-                        FROM %s
+        data = request.json
+        if "username" in data and "password" in data:
+            username = data["username"]
+            password = data["password"]
+        cur.execute(
+            """ SELECT *
+                        FROM Members
                         WHERE username = %s AND password = %s;
-                      """, (userType, userName, passWord))
-        connection.commit()
-    except psycopg.errors:
-        print("Error making the login")
+                      """,
+            (username, password),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
 
-    
-@app.route('/getRoutines', methods=['GET'])
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/getRoutines/<int:memberId>", methods=["GET"])
 def getRoutines(memberId):
     try: 
-        cur.execute("""
+        cur.execute(
+            """
                     SELECT *
-                    FROM ROUTINE
-                    WHERE memberID = %d;
-                    """,(memberId))
-        connection.commit()
-    except psycopg.errors:
-        print("Error getting routines")
+                    FROM Routine
+                    WHERE memberId = %s;
+                    """,
+            (memberId,),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
 
 @app.route('/getExercises', methods=['GET'])
 def getExercises():
@@ -280,162 +474,302 @@ def getExercises():
                     SELECT *
                     FROM EXERCISE;
                     """)
-        connection.commit()
-    except psycopg.errors:
-        print("Error getting exercises") 
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
 
-@app.route('/getAvailableTrainers', methods=['GET'])
-def getAvailableTrainers(day,startTime,endTime):
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/getAvailableTrainers", methods=["POST"])
+def getAvailableTrainers():
     try: 
-        cur.execute("""
+        data = request.json
+        if "day" in data and "startTime" in data and "endTime" in data:
+            day = data["day"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+        cur.execute(
+            """
                     SELECT trainerId
-                    FROM TRAINERAVAILABILITIES
+                    FROM TrainerAvailabilities
                     WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s) AND occupied = False;
-                    """,(day,startTime,endTime))
-        trainers = cur.fetchall()
-        return trainers
+                    """,
+            (day, startTime, endTime),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
 
-    except psycopg.errors:
-        print("Error getting available trainers")
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
 
 @app.route('/createRoutine', methods=['POST'])
-###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following 
-def createRoutine(routineName,description,memberId,exercises):
+###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following
+def createRoutine():
     try: 
+        data = request.json
+        if (
+            "routineName" in data
+            and "description" in data
+            and "memberId" in data
+            and "exercises" in data
+        ):
+            routineName = data["routineName"]
+            description = data["description"]
+            memberId = data["memberId"]
+            exercises = data["exercises"]
         ###Making the routine
-         cur.execute("""
+        cur.execute(
+            """
                     INSERT INTO Routine(routineName,description,memberId)
-                    VALUES (%s,%s,%s,%d)
-                    """,(routineName,description,memberId))
-        
-         connection.commit()
+                    VALUES (%s,%s,%s)
+                    """,
+            (routineName, description, memberId),
+        )
+
+        connection.commit()
 
         ###Getting the routineId of the recently created routine
-         cur.execute("""
+        cur.execute(
+            """
                      SELECT routineId
                      FROM ROUTINE
-                     WHERE routineName = %s AND memberId = %d; 
-                     """,(routineName,memberId))
-        
-         routineId = cur.fetchone()
+                     WHERE routineName = %s AND memberId = %s; 
+                     """,
+            (routineName, memberId),
+        )
 
+        routineId = cur.fetchone()
 
         ###Adding exercises to the routine
-         for i in range(0,len(exercises)):
-            
-            cur.execute("""
-                        INSERT INTO RoutineContains(exerciseId,routineId)
-                        VALUES (%s,%d);
-                        """,(exercises[i],routineId))
-            connection.commit()
-    except psycopg.errors: 
-        print("Error adding exercises")
+        for i in range(0, len(exercises)):
 
-@app.route('/memberSearch', methods=['GET'])
+            cur.execute(
+                """
+                        INSERT INTO RoutineContains(exerciseId,routineId)
+                        VALUES (%s,%s);
+                        """,
+                (exercises[i], routineId[0]),
+            )
+            connection.commit()
+        return jsonify(data)
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/memberSearch/<searchTerm>", methods=["GET"])
 ###Function performing a search for specific members
 def memberSearch(searchTerm):
-    try: 
-        cur.execute("""
+    try:
+        cur.execute(
+            """
                     SELECT memberId,firstName,lastName
-                    FROM MEMBERS
+                    FROM Members
                     WHERE POSITION(%s IN firstName)>0 OR POSITION(%s IN lastName)>0;
-                    """)
-        result = cur.fetchall()
+                    """,
+            (searchTerm, searchTerm),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
 
-    except psycopg.errors:
-        print("Error searching for members") 
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
 
-@app.route('/getMembers', methods=['GET'])
-def getMembers(memberId):
-    try: 
-        cur.execute("""
-                    SELECT *
-                    FROM MEMBERS
-                    WHERE memberId = %d;
-                    """,(memberId))
-        result = cur.fetchall()
+# @app.route('/getMembers', methods=['GET'])
+# def getMembers(memberId):
+#     try:
+#         cur.execute("""
+#                     SELECT *
+#                     FROM Members
+#                     WHERE memberId = %s;
+#                     """,(memberId, ))
+#         columns = [desc[0] for desc in cur.description]
+#         results = cur.fetchall()
+#         data = []
+#         for row in results:
+#             row_data = dict(zip(columns, row))
+#             data.append(row_data)
+#         return jsonify(data)
 
-    except psycopg.errors: 
-        print("Error getting members")
+#     except Exception as e:
+#         print(e)
+#         return jsonify({'error': str(e)})
 
-@app.route('/getAvailableRooms', methods=['GET'])
+
+@app.route("/getAvailableRooms", methods=["POST"])
 ###Finding all the sessions that start on the same days
 def getAvailableRooms():
     try: 
-        ###Finding the sessions that occur on the same day 
-        cur.execute("""
-                    SELECT roomNumber,capacity
+        data = request.json
+        if "day" in data and "startTime" in data and "endTime" in data:
+            day = data["day"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+        ###Finding the sessions that occur on the same day
+        cur.execute(
+            """
+                    SELECT ROOM.roomNumber,ROOM.capacity
                     FROM ROOM
                     LEFT JOIN SESSION
                     ON ROOM.roomNumber = SESSION.roomNumber
-                    WHERE (SESSION.day = 'Monday' AND (SESSION.startTime > '10:00:00' OR SESSION.endTime < '9:00:00')) OR SESSION.day IS NULL; 
-                    """)
-        rooms = cur.fetchall()
-        return rooms
-    except psycopg.errors: 
-        print("Error finding the available rooms")
+                    WHERE (SESSION.day = %s AND (SESSION.startTime > %s OR SESSION.endTime < %s)) OR SESSION.day IS NULL; 
+                    """,
+            (day, startTime, endTime),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
 
 @app.route('/addTrainer', methods=['POST'])
-def addTrainer(trainerId,day,startTime,endTime):
+def addTrainer():
     try:
-        cur.execute("""
-                    UPDATE TRAINERAVAILABILITIES
-                    SET TRAINERAVAILABILITIES.occupied = true
-                    WHERE TRAINERAVAILABILITIES.trainerId = %d AND TRAINERAVAILABILITIES.Day = %s AND TRAINERAVAILABILITIES.endTime <= %s AND  TRAINERAVAILABILITIES.startTime >= %s 
-                    """,(trainerId,day,startTime,endTime))
+        data = request.json
+        if (
+            "trainerId" in data
+            and "day" in data
+            and "startTime" in data
+            and "endTime" in data
+        ):
+            trainerId = data["trainerId"]
+            day = data["day"]
+            startTime = data["startTime"]
+            endTime = data["endTime"]
+        cur.execute(
+            """
+                    UPDATE TrainerAvailabilities
+                    SET occupied = true
+                    WHERE TrainerAvailabilities.trainerId = %s AND TrainerAvailabilities.day = %s AND TrainerAvailabilities.endTime >= %s AND  TrainerAvailabilities.startTime <= %s;
+                    """,
+            (trainerId, day, startTime, endTime),
+        )
         connection.commit()
+        return jsonify(data)
 
-    except psycopg.errors:
-        print("Error removing trainer") 
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
 
-@app.route('/getEquipment', methods=['GET'])
+
+@app.route("/getEquipment/<int:roomNumber>", methods=["GET"])
 def getEquipment(roomNumber):
-    roomNumber = request.args.get('roomNumber')
     try:
         cur.execute(
             """
             SELECT *
             FROM Equipment
-            WHERE roomNumber = '%d';
+            WHERE roomNumber = %s;
             """,
-            (roomNumber)
+            (roomNumber,),
         )
-        result = cur.fetchall()
-        return jsonify(result)
-    
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
     except Exception as e:
-        return jsonify({'error': e})
-    
-@app.route('/updateEquipment', methods=['PUT'])
-def updateEquipment(status, roomNumber):
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/updateEquipment/<int:roomNumber>", methods=["PUT"])
+def updateEquipment(roomNumber):
     try:
-        cur.execute(""" UPDATE Equipment
+        data = request.json
+        if "name" in data and "status" in data and "roomNumber" in data:
+            name = data["name"]
+            status = data["status"]
+        cur.execute(
+            """ UPDATE Equipment
                         SET status = %s
-                        WHERE roomNumber=%d;
-                    """,(status, roomNumber))
+                        WHERE roomNumber=%s AND name=%s;
+                    """,
+            (status, roomNumber, name),
+        )
         connection.commit()
+        return jsonify(data)
 
     except psycopg.errors:
         print("Error updating status for equipment")
-   
-@app.route('/getBills', methods=['GET'])        
+
+
+@app.route("/getBills/<int:memberId>", methods=["GET"])
 def getBills(memberId):
     try:
-        cur.execute("""
+        cur.execute(
+            """
                     SELECT *
                     FROM BILLS 
-                    WHERE memberId = %d;
-                    """,(memberId))
-        connection.commit()
-    except psycopg.errors:
-        print("Error getting bills") 
-        
-@app.route('/addBill', methods=['POST']) 
-def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
+                    WHERE memberId = %s;
+                    """,
+            (memberId,),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/addBill/<int:memberId>", methods=["POST"])
+def addBill(memberId):
     try: 
-        cur.execute(""" INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
-                        VALUES (%f, %s, %d, %d, %r, %s);
-                    """,(amount, service, adminId, memberId, isPaid, paymentDate))
+        data = request.json
+        if (
+            "amount" in data
+            and "service" in data
+            and "adminId" in data
+            # and "memberId" in data
+        ):
+            amount = data["amount"]
+            service = data["service"]
+            adminId = data["adminId"]
+            # memberId = data["memberId"]
+        cur.execute(
+            """ INSERT INTO Bills(amount, service, adminId, memberId, isPaid)
+                        VALUES (%s, %s, %s, %s, %s);
+                    """,
+            (amount, service, adminId, memberId, "False"),
+        )
         connection.commit()
-    except psycopg.errors: 
-        print("Error adding bill")
+        return jsonify(data)
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
