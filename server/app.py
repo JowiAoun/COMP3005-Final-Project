@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from server.db import conn, cursor
 import psycopg
 
+connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
+cur = connection.cursor()
 app = Flask(__name__)
 
 if __name__ == "__main__":
@@ -88,8 +90,7 @@ def getHealthMetrics():
     except Exception as e:
         return jsonify({'error': e})
 
-connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
-cur = connection.cursor()
+
 
 @app.route('/getFitnessGoals', methods=['GET'])
 def getFitnessGoals(member_id):
@@ -201,8 +202,8 @@ def updateRoom(roomNumber,sessionId):
         #Updating the room availability
         cur.execute(""" UPDATE Session
                         SET roomNumber = %d
-                        
-                    """)
+                        WHERE sessionId = %d;
+                    """,(roomNumber,sessionId))
         connection.commit()
     except psycopg.errors:
         print("Error updating the room")
@@ -221,10 +222,19 @@ def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate
         print("Error enrolling member")
 
 @app.route('/createFitnessGoals', methods=['POST'])
-def createFitnessGoals(goalName, deadLine, description, type, commitment, currentPr, memberId):
+def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId):
     try:
-        cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d,%d);
-                    """,(goalName, deadLine, description, type, commitment, currentPr, memberId))
+        cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d);
+                    """,(goalName, deadLine, description, type, commitment, memberId))
+        connection.commit()
+    except psycopg.errors.UniqueViolation:
+        print("Goal already exists for this user")
+
+def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId):
+    try:
+        cur.execute(""" UPDATE FitnessGoals 
+                        SET goalName = %s, deadLine = %s, description = %s, type= %s, commitment = %d, memberId = %d);
+                    """,(goalName, deadLine, description, type, commitment, memberId))
         connection.commit()
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
@@ -241,6 +251,7 @@ def login(userName, passWord, userType):
         connection.commit()
     except psycopg.errors:
         print("Error making the login")
+
     
 @app.route('/getRoutines', methods=['GET'])
 def getRoutines(memberId):
@@ -420,3 +431,4 @@ def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
         connection.commit()
     except psycopg.errors: 
         print("Error adding bill")
+
