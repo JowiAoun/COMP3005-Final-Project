@@ -18,18 +18,18 @@ def test_add_to_db():
     hobby = request.args.get('hobby')
     age = request.args.get('age')
 
-    cursor.execute("""
+    cur.execute("""
         INSERT INTO test (name, hobby, age)
         VALUES (%s, %s, %s);
     """, (name, hobby, age))
 
-    conn.commit()
+    connection.commit()
     return 'Added to db!'
 
 @app.route('/testDbGetPeople', methods=['GET'])
 def test_get_from_db():
-    cursor.execute("SELECT * FROM test;")
-    rows = cursor.fetchall()
+    cur.execute("SELECT * FROM test;")
+    rows = cur.fetchall()
 
     people = []
     for row in rows:
@@ -45,46 +45,54 @@ def test_get_from_db():
 
 @app.route('/testDbClear', methods=['GET'])
 def test_clear_db():
-    cursor.execute(
+    cur.execute(
     """
     DELETE FROM test;
     """)
 
-    conn.commit()
+    connection.commit()
     return 'Cleared db!'
 
-@app.route('/getHeathStats', methods=['GET'])
-def getHealthStats():
-    username = request.args.get('username')
+@app.route('/getHeathStats/<username>', methods=['GET'])
+def getHealthStats(username):
     try:
-        cursor.execute(
+        cur.execute(
             """
-            SELECT caloriesBurned, numOfKmRan
+            SELECT numOfKm_ran, caloriesBurned
             FROM Members
-            WHERE username = '%s';
+            WHERE username = %s;
             """,
-            (username)
+            (username,)
         )
-        result = cursor.fetchall()
-        return jsonify(result)
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return data
     
     except Exception as e:
         return jsonify({'error': e})
 
-@app.route('/getHeathMetrics', methods=['GET'])
-def getHealthMetrics():
-    username = request.args.get('username')
+@app.route('/getHeathMetrics/<username>', methods=['GET'])
+def getHealthMetrics(username):
     try:
-        cursor.execute(
+        cur.execute(
             """
-            SELECT age, weight, height, bmi, restingHeartRate, bloodPressure
+            SELECT age, weight, height, bmi, restingHeartRate
             FROM Members
-            WHERE username = '%s';
+            WHERE username = %s;
             """,
-            (username)
+            (username,)
         )
-        result = cursor.fetchall()
-        return jsonify(result)
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return data
     
     except Exception as e:
         return jsonify({'error': e})
@@ -383,7 +391,7 @@ def addTrainer(trainerId,day,startTime,endTime):
 def getEquipment(roomNumber):
     roomNumber = request.args.get('roomNumber')
     try:
-        cursor.execute(
+        cur.execute(
             """
             SELECT *
             FROM Equipment
@@ -391,7 +399,7 @@ def getEquipment(roomNumber):
             """,
             (roomNumber)
         )
-        result = cursor.fetchall()
+        result = cur.fetchall()
         return jsonify(result)
     
     except Exception as e:
