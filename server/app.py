@@ -398,3 +398,25 @@ def updateEquipment(status, roomNumber):
 
     except psycopg.errors:
         print("Error updating status for equipment")
+   
+@app.route('/getBills', methods=['GET'])        
+def getBills(memberId):
+    try:
+        cur.execute("""
+                    SELECT *
+                    FROM BILLS 
+                    WHERE memberId = %d;
+                    """,(memberId))
+        connection.commit()
+    except psycopg.errors:
+        print("Error getting bills") 
+        
+        
+def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
+    try: 
+        cur.execute(""" INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
+                        VALUES (%f, %s, %d, %d, %r, %s);
+                    """,(amount, service, adminId, memberId, isPaid, paymentDate))
+        connection.commit()
+    except psycopg.errors: 
+        print("Error adding bill")
