@@ -64,6 +64,7 @@ CREATE TABLE FitnessGoals(
 	commitment INT NOT NULL DEFAULT 1,
 	currentPr INT NOT NULL DEFAULT 0,
 	memberId INT,
+	completed BOOLEAN,
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
 
@@ -188,9 +189,9 @@ INSERT INTO Exercise (exerciseName,sets,reps)
 VALUES ('Squats',12, 3),
       ('Treadmill running',20, 1);
 
-INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment,memberId)
-VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3,1),
-       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3,2);
+INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment,memberId,completed)
+VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3,1,false),
+       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3,2,true);
 
 INSERT INTO TrainerAvailabilities (day, startTime, endTime, trainerId,occupied)
 VALUES ('Monday', '10:00:00', '13:00:00', 1,true),

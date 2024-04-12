@@ -222,10 +222,10 @@ def enrollMember(firstName, lastName, age, weight, height, bmi, restingHeartRate
         print("Error enrolling member")
 
 @app.route('/createFitnessGoals', methods=['POST'])
-def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId):
+def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId,completed):
     try:
-        cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d);
-                    """,(goalName, deadLine, description, type, commitment, memberId))
+        cur.execute(""" INSERT INTO FitnessGoals VALUES (%s,%s,%s,%s,%d,%d,%r);
+                    """,(goalName, deadLine, description, type, commitment, memberId,False))
         connection.commit()
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
