@@ -53,16 +53,16 @@ def test_clear_db():
     connection.commit()
     return 'Cleared db!'
 
-@app.route('/getHeathStats/<username>', methods=['GET'])
-def getHealthStats(username):
+@app.route('/getHeathStats/<int:memberId>', methods=['GET'])
+def getHealthStats(memberId):
     try:
         cur.execute(
             """
             SELECT numOfKm_ran, caloriesBurned
             FROM Members
-            WHERE username = %s;
+            WHERE memberId = %s;
             """,
-            (username,)
+            (memberId,)
         )
         columns = [desc[0] for desc in cur.description]
         results = cur.fetchall()
@@ -70,21 +70,21 @@ def getHealthStats(username):
         for row in results:
             row_data = dict(zip(columns, row))
             data.append(row_data)
-        return data
+        return jsonify(data)
     
     except Exception as e:
-        return jsonify({'error': e})
+        return jsonify({'error': str(e)})
 
-@app.route('/getHeathMetrics/<username>', methods=['GET'])
-def getHealthMetrics(username):
+@app.route('/getHeathMetrics/<int:memberId>', methods=['GET'])
+def getHealthMetrics(memberId):
     try:
         cur.execute(
             """
             SELECT age, weight, height, bmi, restingHeartRate
             FROM Members
-            WHERE username = %s;
+            WHERE memberId = %s;
             """,
-            (username,)
+            (memberId,)
         )
         columns = [desc[0] for desc in cur.description]
         results = cur.fetchall()
@@ -92,14 +92,15 @@ def getHealthMetrics(username):
         for row in results:
             row_data = dict(zip(columns, row))
             data.append(row_data)
-        return data
+        return jsonify(data)
     
     except Exception as e:
-        return jsonify({'error': e})
+        return jsonify({'error': str(e)})
 
 
 
-@app.route('/getFitnessGoals', methods=['GET'])
+
+@app.route('/getFitnessGoals/<memberId>', methods=['GET'])
 def getFitnessGoals(member_id):
     cur.execute(""" SELECT goalName
                     FROM FitnessGoals
