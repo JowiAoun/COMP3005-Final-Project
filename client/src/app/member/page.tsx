@@ -73,7 +73,7 @@ export default function Page() {
   const getBillsUnpaid = (): number => {
     let n = 0;
 
-    bills && bills.map((bill, index) => {
+    bills && bills.map((bill, _) => {
       if (!bill.paid) {
         ++n;
       }
@@ -298,9 +298,10 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{tempMember.username}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <a href="/member/profile"><DropdownMenuItem>Profile</DropdownMenuItem></a>
+              <DropdownMenuItem>Membership</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">Logout</DropdownMenuItem>

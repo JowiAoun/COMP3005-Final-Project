@@ -48,9 +48,9 @@ export default function Page()  {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="firstName">First Name</Label>
-              <Input id="firstName" defaultValue={tempMember.lastName} />
+              <Input id="firstName" defaultValue={tempMember.firstName} />
               <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" defaultValue={tempMember.firstName} />
+              <Input id="lastName" defaultValue={tempMember.lastName} />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
@@ -77,11 +77,11 @@ export default function Page()  {
               <DatePicker date={date} setDate={setDate}></DatePicker>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="weight">Weight</Label>
+              <Label htmlFor="weight">Weight (kg)</Label>
               <Input id="weight" defaultValue={tempMember.healthMetrics.weight}/>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="height">Height</Label>
+              <Label htmlFor="height">Height (cm)</Label>
               <Input id="height" defaultValue={tempMember.healthMetrics.height}/>
             </div>
           </CardContent>

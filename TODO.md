@@ -1,7 +1,5 @@
-TODO:
-- Modify phone compatibility in membership page
-- Change website title & description in src/app/layout.tsx
-- Set up local db with compose
+Client-Server communication:
+- client/src/app/trainer/availabilities.tsx: in `saveAvailabilities`, add saving availabilities function call
 
-Before submission:
-- Make sure that the DB is either on AWS or uses a docker image, NOT A DB ON THE HOST
+TODO:
+- Change website title & description in src/app/layout.tsx
