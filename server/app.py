@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from server.db import conn, cursor
 import psycopg
 
 connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
