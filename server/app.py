@@ -126,7 +126,7 @@ def addTrainerAvailabilites(day,startTime,endTime,trainerId):
         print("availability already exists")
 
 @app.route('/updateTrainerAvailabilites', methods=['PUT'])
-def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId):
+def updateTrainerAvailabilites(newDay,newStartTime,newEndTime,trainerId, startTime):
     try:
         cur.execute(""" UPDATE TrainerAvailabilities
                         SET day = %s, startTime = %s, endTime = %s
@@ -309,7 +309,7 @@ def createRoutine(routineName,description,memberId,exercises):
                      WHERE routineName = %s AND memberId = %d; 
                      """,(routineName,memberId))
         
-         routineId - cur.fetchone()
+         routineId = cur.fetchone()
 
 
         ###Adding exercises to the routine
@@ -422,7 +422,7 @@ def getBills(memberId):
     except psycopg.errors:
         print("Error getting bills") 
         
-        
+@app.route('/addBill', methods=['POST']) 
 def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
     try: 
         cur.execute(""" INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
@@ -431,4 +431,3 @@ def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
         connection.commit()
     except psycopg.errors: 
         print("Error adding bill")
-
