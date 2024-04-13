@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, make_response, request, jsonify, redirect
 from flask_cors import CORS
 import psycopg
 import datetime
@@ -9,7 +9,7 @@ connection = psycopg.connect(
 cur = connection.cursor()
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 if __name__ == "__main__":
     app.run(debug = True)
@@ -403,9 +403,17 @@ def createFitnessGoals(memberId):
         print("Goal already exists for this user")
 
 
-@app.route("/login/", methods=["POST"])
+@app.route("/login/", methods=["POST", "OPTIONS"])
 ###General
 def login():
+    if request.method == "OPTIONS":
+        # Handle preflight request
+        response = make_response()
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+        response.headers["Access-Control-Allow-Methods"] = "POST"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
     ###Checking if there exists a user with the given username and password
     try:
         data = request.json
@@ -425,11 +433,22 @@ def login():
         for row in results:
             row_data = dict(zip(columns, row))
             data.append(row_data)
-        return jsonify(data)
-
+        if len(results) > 0:
+            # response = make_response(redirect("/member"))
+            # response.set_cookie("memberId", results[0][0])
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False})
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)})
+
+
+# @app.route("/member")
+# def member():
+#     memberId = request.cookies.get("memberId")
+#     print(memberId)
+#     return redirect("http://localhost:3000/member")
 
 
 @app.route("/getRoutines/<int:memberId>", methods=["GET"])
