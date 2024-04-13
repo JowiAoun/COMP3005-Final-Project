@@ -13,6 +13,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/app/utils/api";
 
+function getCookie(cookieName : any) {
+  // Split the document.cookie string into individual cookies
+  const cookies = document.cookie.split(';');
+
+  // Loop through the cookies to find the one with the specified name
+  for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim(); // Trim whitespace
+
+      // Check if the cookie starts with the specified name
+      if (cookie.startsWith(cookieName + '=')) {
+          // Return the value of the cookie (after the '=' sign)
+          return cookie.substring(cookieName.length + 1);
+      }
+  }
+}
+
+
 export default function Page() {
   const [formData, setFormData] = useState({
     username: "",
@@ -35,7 +52,7 @@ export default function Page() {
     login(formData.username, formData.password)
       .then((result) => {
         window.location.href = "http://localhost:3000/member"
-        console.log(result); // Log the result
+        // Log the result
         document.cookie = 'memberId='+JSON.parse(result).memberId+";"
       })
       .catch((error) => {
