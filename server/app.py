@@ -814,6 +814,31 @@ def addBill(memberId):
         return jsonify({"error": str(e)})
 
 
+@app.route("/updateBill/<int:invoice_id>", methods=["PUT"])
+def updateBill(invoice_id):
+    try:
+        data = request.json
+        if "isPaid" in data and "paymentDate" in data:
+            isPaid = data["isPaid"]
+            paymentDate = data["paymentDate"]
+        cur.execute(
+            """ UPDATE Bills
+                        SET isPaid = %s, paymentDate = %s
+                        WHERE invoice_id = %s;
+                    """,
+            (
+                isPaid,
+                paymentDate,
+                invoice_id,
+            ),
+        )
+        connection.commit()
+        return jsonify(data)
+
+    except psycopg.errors:
+        print("Error updating status for equipment")
+
+
 @app.route("/getSessions", methods=["GET"])
 def getSessions():
     try:
