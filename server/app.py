@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import psycopg
 import datetime
 
-connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
+connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=Wy5w0UY5l55G1Pf")
 cur = connection.cursor()
 app = Flask(__name__)
+
+CORS(app)
 
 if __name__ == "__main__":
     app.run(debug = True)

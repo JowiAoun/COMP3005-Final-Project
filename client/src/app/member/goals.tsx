@@ -27,6 +27,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {createFitnessGoals} from "@/app/utils/api";
 
 interface GoalsProps {
   goals?: FitnessGoals[];
@@ -55,8 +56,8 @@ const Goals: React.FC<GoalsProps> = ({goals}) => {
   const handleSubmit = () => {
     setFormData({...formData, deadline: date || new Date()});
     setUserGoals([...userGoals, formData]);
-    console.log(userGoals);
-    //! send to server
+    // console.log(userGoals);
+    createFitnessGoals(formData, 1); //! temp
   };
 
   return (

@@ -29,7 +29,6 @@ const Availabilities: React.FC<AvailabilitiesProps> = ({defaultAvailabilities}) 
 
   const saveAvailabilities = () => {
     setAvailabilities(tempAvailabilities);
-
     //! save `availabilities` to database here
   }
 

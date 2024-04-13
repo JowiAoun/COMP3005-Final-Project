@@ -1,10 +1,10 @@
 import psycopg
 
 # Database environment variables
-DB_HOST = 'comp3005-final-db-1'
-DB_NAME = 'db-comp3005-final-project-local'
+DB_HOST = 'localhost'
+DB_NAME = 'finalproject'
 DB_USER = 'postgres'
-DB_PASS = 'postgres123'
+DB_PASS = 'Wy5w0UY5l55G1Pf'
 DB_PORT = 5432
 
 # Connect to the database

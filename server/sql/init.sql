@@ -67,7 +67,6 @@ CREATE TABLE FitnessGoals(
 	completed BOOLEAN,
 	FOREIGN KEY(memberId)
 		REFERENCES Members(memberId)
-
 );
 
 CREATE TABLE TrainerAvailabilities(
