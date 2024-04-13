@@ -47,3 +47,27 @@ export const createFitnessGoals = (fitnessGoal: FitnessGoals, trainerId: number)
     .then((result) => console.log(result))
     .catch((error) => console.error(error));
 }
+
+export const enrollMember = (firstName: any, lastName: any, username: any, password: any) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "firstName": firstName,
+    "lastName": lastName,
+    "username": username,
+    "password": password
+  });
+
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow"
+  };
+
+  fetch("http://127.0.0.1:5000/enrollMember", requestOptions)
+    .then((response) => response.text())
+    .then((result) => console.log(result))
+    .catch((error) => console.error(error));
+}
