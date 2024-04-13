@@ -862,3 +862,30 @@ def getSessions():
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)})
+
+
+@app.route("/getCurrentSessions/<int:memberId>", methods=["GET"])
+def getCurrentSessions(memberId):
+    try:
+        cur.execute(
+            """
+                    SELECT *
+                    FROM Session 
+                    WHERE memberId = %s
+                    """,
+            (memberId,),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            for key, value in row_data.items():
+                if isinstance(value, datetime.time):
+                    row_data[key] = str(value)
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
