@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+// import { login } from "@/app/utils/api";
 
 export default function Page() {
   const [formData, setFormData] = useState({
@@ -30,6 +31,13 @@ export default function Page() {
     event.preventDefault();
     // console.log(formData);
     //! submit to server
+    // login(formData.username, formData.password)
+    //   .then((result) => {
+    //     console.log(result); // Log the result
+    //   })
+    //   .catch((error) => {
+    //     console.error(error); // Log any errors
+    //   });
   };
 
   return (
