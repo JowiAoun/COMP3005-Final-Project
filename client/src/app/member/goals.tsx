@@ -28,6 +28,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {formatDate, isBeforeToday} from "@/app/utils/functions";
+import { createFitnessGoals } from "../utils/api";
 
 interface GoalsProps {
   goals: FitnessGoals[];

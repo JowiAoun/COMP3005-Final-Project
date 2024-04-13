@@ -41,9 +41,10 @@ import React, {useState} from "react";
 import {tempBills, tempMembers, tempSessions} from "@/app/utils/tempValues";
 import Goals from "@/app/member/goals";
 import {FitnessGoals, Member} from "@/entities/member";
+import { getMemberInfo } from "../utils/api";
 
 export default function Page() {
-  const [member, setMember] = useState<Member>(tempMembers[0])
+  const [member, setMember] = useState<Member>(getMemberInfo())
   const [sessions, setSessions] = useState(tempSessions)
   const [routines, setRoutines] = useState(tempMembers[0].routines)
   const [bills, setBills] = useState(tempBills)

@@ -1,4 +1,5 @@
-import {FitnessGoals} from "@/entities/member";
+import { FitnessGoals, Member } from "@/entities/member";
+import { tempMembers } from "./tempValues";
 
 export const addTrainerAvailabilities = (day: string, startTime: string, endTime: string, trainerId: any) => {
   const myHeaders = new Headers();
@@ -43,7 +44,7 @@ export const enrollMember = (firstName: any, lastName: any, username: any, passw
 
   fetch("http://127.0.0.1:5000/enrollMember", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -80,7 +81,7 @@ export const getHealthMetrics = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getHeathMetrics/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -92,7 +93,7 @@ export const getHealthStats = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getHeathStats/1", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -104,7 +105,7 @@ export const getFitnessGoals = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getFitnessGoals/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -116,7 +117,7 @@ export const getRoutines = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getRoutines/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -128,7 +129,7 @@ export const getExercises = () => {
 
   fetch("http://127.0.0.1:5000/getExercises", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -151,7 +152,7 @@ export const getAvailableTrainers = (day: any, startTime: any, endTime: any) => 
 
   fetch("http://127.0.0.1:5000/getAvailableTrainers", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -175,7 +176,7 @@ export const createRoutine = (routineName: any, description: any, memberId: any,
 
   fetch("http://127.0.0.1:5000/createRoutine", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -187,7 +188,7 @@ export const memberSearch = (searchTerm: any) => {
 
   fetch("http://127.0.0.1:5000/memberSearch/" + searchTerm, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -210,7 +211,7 @@ export const getAvailableRooms = (day: any, startTime: any, endTime: any) => {
 
   fetch("http://127.0.0.1:5000/getAvailableRooms", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -234,7 +235,7 @@ export const addTrainer = (trainerId: any, day: any, startTime: any, endTime: an
 
   fetch("http://127.0.0.1:5000/addTrainer", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -249,7 +250,7 @@ export const getEquipment = (roomNumber: any) => {
 
   fetch("http://127.0.0.1:5000/getEquipment/" + roomNumber, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -272,7 +273,7 @@ export const updateEquipment = (roomNumber: any, name: any, status: any) => {
 
   fetch("http://127.0.0.1:5000/updateEquipment/" + roomNumber, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -284,7 +285,7 @@ export const getBills = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getBills/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -308,7 +309,7 @@ export const addBill = (amount: any, service: any, adminId: any, memberId: any) 
 
   fetch("http://127.0.0.1:5000/addBill/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -333,7 +334,7 @@ export const createFitnessGoals = (fitnessGoal: FitnessGoals, trainerId: number)
 
   fetch("http://127.0.0.1:5000/createFitnessGoals/" + trainerId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -359,7 +360,7 @@ export const updateTrainerAvailabilities = (newDay: any, newStartTime: any, newE
 
   fetch("http://127.0.0.1:5000/updateTrainerAvailabilites/" + trainerId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -391,7 +392,7 @@ export const createSession = (type: any, capacity: any, name: any, description: 
 
   fetch("http://127.0.0.1:5000/createSession", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -423,7 +424,7 @@ export const updateSession = (sessionId: any, type: any, capacity: any, name: an
 
   fetch("http://127.0.0.1:5000/updateSession/" + sessionId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -444,11 +445,11 @@ export const updateRoom = (roomNumber: any, sessionId: any) => {
 
   fetch("http://127.0.0.1:5000/updateRoom/" + sessionId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
-export const getMemberInfo = (memberId: any) => {
+export const getMemberInfo = (memberId: any): Member => {
   const requestOptions: any = {
     method: "GET",
     redirect: "follow"
@@ -456,8 +457,9 @@ export const getMemberInfo = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getMemberInfo/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
+  return tempMembers[0]
 }
 
 export const updateMemberInfo = (memberId: any, firstName: any, lastName: any, age: any, weight: any, height: any, password: any) => {
@@ -482,7 +484,7 @@ export const updateMemberInfo = (memberId: any, firstName: any, lastName: any, a
 
   fetch("http://127.0.0.1:5000/updateMemberInfo/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -494,7 +496,7 @@ export const getSessions = () => {
 
   fetch("http://127.0.0.1:5000/getSessions", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -516,7 +518,7 @@ export const updateBill = (isPaid: any, paymentDate: any, invoice_id: any) => {
 
   fetch("http://127.0.0.1:5000/updateBill/" + invoice_id, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -528,7 +530,7 @@ export const getCurrentSessions = (memberId: any) => {
 
   fetch("http://127.0.0.1:5000/getCurrentSessions/" + memberId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
 
@@ -540,6 +542,6 @@ export const getNumberMembersInSession = (sessionId: any) => {
 
   fetch("http://127.0.0.1:5000/getNumberMembersInSession/" + sessionId, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => { return result })
     .catch((error) => console.error(error));
 }
