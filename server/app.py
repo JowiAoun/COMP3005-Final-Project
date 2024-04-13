@@ -595,25 +595,63 @@ def memberSearch(searchTerm):
         print(e)
         return jsonify({"error": str(e)})
 
-# @app.route('/getMembers', methods=['GET'])
-# def getMembers(memberId):
-#     try:
-#         cur.execute("""
-#                     SELECT *
-#                     FROM Members
-#                     WHERE memberId = %s;
-#                     """,(memberId, ))
-#         columns = [desc[0] for desc in cur.description]
-#         results = cur.fetchall()
-#         data = []
-#         for row in results:
-#             row_data = dict(zip(columns, row))
-#             data.append(row_data)
-#         return jsonify(data)
 
-#     except Exception as e:
-#         print(e)
-#         return jsonify({'error': str(e)})
+@app.route("/getMemberInfo/<int:memberId>", methods=["GET"])
+def getMemberInfo(memberId):
+    try:
+        cur.execute(
+            """
+                    SELECT *
+                    FROM Members
+                    WHERE memberId = %s;
+                    """,
+            (memberId,),
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            data.append(row_data)
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/updateMemberInfo/<int:memberId>", methods=["PUT"])
+def updateMemberInfo(memberId):
+    try:
+        data = request.json
+        if (
+            "firstName" in data
+            and "lastName" in data
+            and "age" in data
+            and "weight" in data
+            and "height" in data
+            and "password" in data
+        ):
+            firstName = data["firstName"]
+            lastName = data["lastName"]
+            age = data["age"]
+            weight = data["weight"]
+            height = data["height"]
+            password = data["password"]
+        cur.execute(
+            """
+                        UPDATE Members
+                        SET firstName = %s, lastName = %s, age = %s, weight = %s, height = %s, password = %s
+                        WHERE memberId = %s;
+                        """,
+            (firstName, lastName, age, weight, height, password, memberId),
+        )
+        connection.commit()
+        return jsonify(data)
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
 
 
 @app.route("/getAvailableRooms", methods=["POST"])
