@@ -12,12 +12,12 @@ import {
   Tabs,
   TabsContent
 } from "@/components/ui/tabs"
-import {tempMember} from "@/app/utils/tempValues";
+import {tempMembers} from "@/app/utils/tempValues";
 import {useState} from "react";
 import {PasswordDialog} from "@/app/member/profile/_components/passwordDialog";
 
 export default function Page()  {
-  const [password, setPassword] = useState<string>(tempMember.password)
+  const [password, setPassword] = useState<string>(tempMembers[0].password)
 
   const handleSetPassword = (currGuessedPassword: string, newPassword: string) => {
     if (currGuessedPassword == password) {

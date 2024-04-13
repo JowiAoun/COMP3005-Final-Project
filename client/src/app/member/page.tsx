@@ -1,5 +1,5 @@
 "use client"
-import Exercises from "@/app/member/exercises";
+import Routines from "@/app/member/routines";
 import Achievements from "@/app/member/achievements";
 import Analytics from "@/app/member/analytics";
 import Sessions from "@/app/member/sessions";
@@ -9,7 +9,7 @@ import {
   Bell,
   CircleUser, Dumbbell,
   Home,
-  LineChart,
+  LineChart, Medal,
   Menu,
   Package,
   Package2, ReceiptText,
@@ -38,7 +38,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import React, {useState} from "react";
-import {tempBills, tempMember, tempSessions} from "@/app/utils/tempValues";
+import {tempBills, tempMembers, tempSessions} from "@/app/utils/tempValues";
+import Goals from "@/app/member/goals";
 
 export default function Page() {
   const [selectSection, setSelectedSection] = useState(0)
@@ -48,14 +49,16 @@ export default function Page() {
   const getSection = () => {
     switch(selectSection) {
       case 0:
-        return <Analytics member={tempMember}/>;
+        return <Analytics member={tempMembers[0]}/>;
       case 1:
-        return <Exercises />;
+        return <Routines />;
       case 2:
-        return <Achievements />;
+        return <Goals goals={tempMembers[0].fitnessGoals}/>;
       case 3:
-        return <Sessions sessions={sessions} />;
+        return <Achievements member={tempMembers[0]}/>;
       case 4:
+        return <Sessions sessions={sessions} />;
+      case 5:
         return <Billing bills={bills} setBills={setBills} />;
       default:
         return null;
@@ -83,7 +86,7 @@ export default function Page() {
   }
 
   const getMembershipDesc = () => {
-    switch(tempMember.membershipType) {
+    switch(tempMembers[0].membershipType) {
       case "Bronze":
       case "Silver":
         return "Thanks for being a valued member! Upgrade for more."
@@ -133,7 +136,7 @@ export default function Page() {
                 }`}
               >
                 <Dumbbell className="h-4 w-4" />
-                Exercises
+                Routines
               </Link>
               <Link
                 href="#"
@@ -144,8 +147,8 @@ export default function Page() {
                     : 'text-muted-foreground'
                 }`}
               >
-                <Trophy className="h-4 w-4" />
-                Achievements
+                <Medal className="h-4 w-4" />
+                Goals
               </Link>
               <Link
                 href="#"
@@ -156,14 +159,26 @@ export default function Page() {
                     : 'text-muted-foreground'
                 }`}
               >
-                <Users className="h-4 w-4" />
-                Sessions
+                <Trophy className="h-4 w-4" />
+                Achievements
               </Link>
               <Link
                 href="#"
                 onClick={() => setSelectedSection(4)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
                   selectSection === 4
+                    ? 'bg-muted text-primary'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                <Users className="h-4 w-4" />
+                Sessions
+              </Link>
+              <Link
+                href="#"
+                onClick={() => setSelectedSection(5)}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                  selectSection === 5
                     ? 'bg-muted text-primary'
                     : 'text-muted-foreground'
                 }`}
@@ -184,7 +199,7 @@ export default function Page() {
           <div className="mt-auto p-4">
             <Card>
               <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>{tempMember.membershipType} Membership</CardTitle>
+                <CardTitle>{tempMembers[0].membershipType} Membership</CardTitle>
                 <CardDescription>
                   {getMembershipDesc()}
                 </CardDescription>
@@ -262,7 +277,7 @@ export default function Page() {
               <div className="mt-auto">
                 <Card>
                   <CardHeader>
-                    <CardTitle>{tempMember.membershipType} Membership</CardTitle>
+                    <CardTitle>{tempMembers[0].membershipType} Membership</CardTitle>
                     <CardDescription>
                       {getMembershipDesc()}
                     </CardDescription>
@@ -298,7 +313,7 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{tempMember.username}</DropdownMenuLabel>
+              <DropdownMenuLabel>{tempMembers[0].username}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <a href="/member/profile"><DropdownMenuItem>Profile</DropdownMenuItem></a>
               <DropdownMenuItem>Membership</DropdownMenuItem>

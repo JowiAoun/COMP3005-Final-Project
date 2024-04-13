@@ -123,7 +123,7 @@ const Availabilities: React.FC<AvailabilitiesProps> = ({defaultAvailabilities}) 
 
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Edit Availabilities</Button>
+          <Button>Edit Availabilities</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

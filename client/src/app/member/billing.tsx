@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import {Bill} from "@/entities/bill";
 import {BillDialog} from "@/app/member/_components/billDialog";
+import {formatDate} from "@/app/utils/functions";
 
 interface BillingProps {
   bills: Bill[];
@@ -40,6 +41,7 @@ const Sessions: React.FC<BillingProps> = ({bills, setBills}) => {
             <TableHead>Service</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Method</TableHead>
+            <TableHead>Payment Date</TableHead>
             <TableHead className="text-right">Amount</TableHead>
           </TableRow>
         </TableHeader>
@@ -62,6 +64,9 @@ const Sessions: React.FC<BillingProps> = ({bills, setBills}) => {
                   bill!.method
                   : <BillDialog bill={bill} updateBill={updateBill}/>
                 }
+              </TableCell>
+              <TableCell>
+                {bill?.paid ? formatDate(bill.paymentDate) : null}
               </TableCell>
               <TableCell className="text-right font-bold">${bill!.amount.toLocaleString('en-US', {
                 minimumFractionDigits: 2,

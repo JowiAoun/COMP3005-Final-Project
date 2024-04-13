@@ -13,7 +13,7 @@ import React, {useState} from "react";
 import Members from "@/app/trainer/members";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Badge} from "@/components/ui/badge";
-import {tempMember, tempMembers, tempTrainers} from "@/app/utils/tempValues";
+import {tempMembers, tempTrainers} from "@/app/utils/tempValues";
 import {Input} from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -179,7 +179,7 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{tempMember.username}</DropdownMenuLabel>
+              <DropdownMenuLabel>{tempMembers[0].username}</DropdownMenuLabel>
               <DropdownMenuSeparator/>
               <a href="/member/profile"><DropdownMenuItem>Profile</DropdownMenuItem></a>
               <DropdownMenuItem>Membership</DropdownMenuItem>

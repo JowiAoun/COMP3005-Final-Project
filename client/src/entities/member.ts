@@ -28,5 +28,5 @@ export interface FitnessGoals {
   description: string;
   type: string;
   commitment: number;
-  currentPr: number;
+  completed: boolean;
 }

@@ -3,25 +3,6 @@ import {Bill} from "@/entities/bill";
 import {Session} from "@/entities/session";
 import {Trainer} from "@/entities/trainer";
 
-export const tempMember: Member = {
-  memberId: 0,
-  username: "JohnDoe111",
-  password: "mypassword222",
-  firstName: "John",
-  lastName: "Doe",
-  membershipType: "Silver",
-  healthStatics: {
-    caloriesBurned: 385,
-    ran: 32,
-  },
-  healthMetrics: {
-    age: new Date(1993, 1, 21),
-    weight: 82,
-    height: 183,
-    bmi: 27,
-  },
-}
-
 export const tempMembers: Member[] = [
   {
     memberId: 1,
@@ -40,6 +21,48 @@ export const tempMembers: Member[] = [
       height: 170,
       bmi: 22.49,
     },
+    fitnessGoals: [
+      {
+        goalName: "Lose 10 pounds",
+        deadline: new Date("2024-06-30"),
+        description: "Achieve a weight loss of 10 pounds by the end of June.",
+        type: "Weight loss",
+        commitment: 5,
+        completed: false,
+      },
+      {
+        goalName: "Run a half-marathon",
+        deadline: new Date("2024-09-15"),
+        description: "Complete a half-marathon race by September.",
+        type: "Endurance",
+        commitment: 3,
+        completed: false,
+      },
+      {
+        goalName: "Increase muscle mass",
+        deadline: new Date("2024-08-31"),
+        description: "Gain 5 pounds of muscle mass by the end of August.",
+        type: "Muscle building",
+        commitment: 4,
+        completed: false,
+      },
+      {
+        goalName: "Improve flexibility",
+        deadline: new Date("2024-07-31"),
+        description: "Achieve a full split and improve overall flexibility by July.",
+        type: "Flexibility",
+        commitment: 2,
+        completed: false,
+      },
+      {
+        goalName: "Reduce body fat percentage",
+        deadline: new Date("2024-08-15"),
+        description: "Lower body fat percentage by 5% by mid-August.",
+        type: "Body composition",
+        commitment: 6,
+        completed: false,
+      },
+    ],
   },
   {
     memberId: 2,
@@ -58,6 +81,48 @@ export const tempMembers: Member[] = [
       height: 165,
       bmi: 25.71,
     },
+    fitnessGoals: [
+      {
+        goalName: "Complete 100 push-ups",
+        deadline: new Date("2024-07-15"),
+        description: "Be able to complete 100 consecutive push-ups by mid-July.",
+        type: "Strength",
+        commitment: 4,
+        completed: false,
+      },
+      {
+        goalName: "Master the handstand",
+        deadline: new Date("2024-09-30"),
+        description: "Achieve a stable handstand position for at least 30 seconds by the end of September.",
+        type: "Balance",
+        commitment: 3,
+        completed: false,
+      },
+      {
+        goalName: "Complete a 10k run",
+        deadline: new Date("2024-08-10"),
+        description: "Participate in and complete a 10k running race by early August.",
+        type: "Endurance",
+        commitment: 4,
+        completed: false,
+      },
+      {
+        goalName: "Improve bench press max",
+        deadline: new Date("2024-09-30"),
+        description: "Increase bench press one-rep max by 20 pounds by the end of September.",
+        type: "Strength",
+        commitment: 3,
+        completed: false,
+      },
+      {
+        goalName: "Achieve a sub-20 minute 5k",
+        deadline: new Date("2024-08-20"),
+        description: "Run a 5k race in under 20 minutes by mid-August.",
+        type: "Speed",
+        commitment: 5,
+        completed: false,
+      },
+    ]
   },
   {
     memberId: 3,
@@ -174,40 +239,44 @@ export const tempTrainers: Trainer[] = [
   },
 ];
 
-
 export const tempBills: Bill[] = [
   {
     id: 1,
     service: "Membership - Silver Tier",
     paid: true,
     method: "Credit Card",
-    amount: 19.99
+    amount: 19.99,
+    paymentDate: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000) // 21 days ago
   },
   {
     id: 2,
     service: "Personal Training - 1hr",
     paid: true,
     method: "e-Transfer",
-    amount: 57.50
+    amount: 57.50,
+    paymentDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) // 14 days ago
   },
   {
     id: 3,
     service: "Membership - Silver Tier",
     paid: true,
     method: "Credit Card",
-    amount: 19.99
+    amount: 19.99,
+    paymentDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 7 days ago
   },
   {
     id: 4,
     service: "Personal Training - 2hrs",
     paid: false,
-    amount: 110.25
+    amount: 110.25,
+    paymentDate: undefined,
   },
   {
     id: 5,
     service: "Membership - Silver Tier",
     paid: false,
-    amount: 19.99
+    amount: 19.99,
+    paymentDate: undefined,
   },
 ]
 

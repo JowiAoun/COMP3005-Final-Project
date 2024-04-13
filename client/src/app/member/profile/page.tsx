@@ -16,14 +16,14 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import {tempMember} from "@/app/utils/tempValues";
+import {tempMembers} from "@/app/utils/tempValues";
 import {DatePicker} from "@/app/member/profile/_components/datePicker";
 import {useState} from "react";
 import {PasswordDialog} from "@/app/member/profile/_components/passwordDialog";
 
 export default function Page()  {
-  const [date, setDate] = useState<Date>(tempMember.healthMetrics.age)
-  const [password, setPassword] = useState<string>(tempMember.password)
+  const [date, setDate] = useState<Date>(tempMembers[0].healthMetrics.age)
+  const [password, setPassword] = useState<string>(tempMembers[0].password)
 
   const handleSetPassword = (currGuessedPassword: string, newPassword: string) => {
     if (currGuessedPassword == password) {
@@ -48,13 +48,13 @@ export default function Page()  {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="firstName">First Name</Label>
-              <Input id="firstName" defaultValue={tempMember.firstName} />
+              <Input id="firstName" defaultValue={tempMembers[0].firstName} />
               <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" defaultValue={tempMember.lastName} />
+              <Input id="lastName" defaultValue={tempMembers[0].lastName} />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue={tempMember.username} />
+              <Input id="username" defaultValue={tempMembers[0].username} />
             </div>
           </CardContent>
           <CardFooter>
@@ -78,11 +78,11 @@ export default function Page()  {
             </div>
             <div className="space-y-1">
               <Label htmlFor="weight">Weight (kg)</Label>
-              <Input id="weight" defaultValue={tempMember.healthMetrics.weight}/>
+              <Input id="weight" defaultValue={tempMembers[0].healthMetrics.weight}/>
             </div>
             <div className="space-y-1">
               <Label htmlFor="height">Height (cm)</Label>
-              <Input id="height" defaultValue={tempMember.healthMetrics.height}/>
+              <Input id="height" defaultValue={tempMembers[0].healthMetrics.height}/>
             </div>
           </CardContent>
           <CardFooter>
