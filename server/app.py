@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import psycopg
+import datetime
 
 connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=postgres")
 cur = connection.cursor()
@@ -808,6 +809,31 @@ def addBill(memberId):
         )
         connection.commit()
         return jsonify(data)
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+
+
+@app.route("/getSessions", methods=["GET"])
+def getSessions():
+    try:
+        cur.execute(
+            """
+                    SELECT *
+                    FROM Session 
+                    """,
+        )
+        columns = [desc[0] for desc in cur.description]
+        results = cur.fetchall()
+        data = []
+        for row in results:
+            row_data = dict(zip(columns, row))
+            for key, value in row_data.items():
+                if isinstance(value, datetime.time):
+                    row_data[key] = str(value)
+            data.append(row_data)
+        return jsonify(data)
+
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)})
