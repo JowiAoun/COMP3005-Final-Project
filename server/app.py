@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True, port=5000)
 
 @app.route('/', methods=['GET'])
 def hello_world():
@@ -403,7 +403,7 @@ def createFitnessGoals(memberId):
         print("Goal already exists for this user")
 
 
-@app.route("/login/", methods=["POST", "OPTIONS"])
+@app.route("/login", methods=["POST", "OPTIONS"])
 ###General
 def login():
     if request.method == "OPTIONS":
@@ -434,9 +434,14 @@ def login():
             row_data = dict(zip(columns, row))
             data.append(row_data)
         if len(results) > 0:
-            # response = make_response(redirect("/member"))
-            # response.set_cookie("memberId", results[0][0])
-            return jsonify({"success": True})
+            response = make_response(jsonify({"success": True}))
+            # Set the memberId cookie
+
+            response.set_cookie(
+                "memberId", str(results[0][0])
+            )  # Assuming memberId is the first column
+            print(request.cookies.get("memberId"))
+            return response
         else:
             return jsonify({"success": False})
     except Exception as e:
