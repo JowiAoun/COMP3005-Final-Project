@@ -63,6 +63,23 @@ export const tempMembers: Member[] = [
         completed: false,
       },
     ],
+    routines: [
+      {
+        id: 1,
+        name: "Morning Stretch",
+        description: "Start your day with a gentle stretching routine to wake up your muscles and improve flexibility."
+      },
+      {
+        id: 2,
+        name: "Morning Meditation",
+        description: "Take a few minutes for mindfulness meditation to set a positive tone for the day ahead."
+      },
+      {
+        id: 3,
+        name: "Breakfast Preparation",
+        description: "Prepare a healthy and nutritious breakfast to fuel your body and mind for the day."
+      }
+    ],
   },
   {
     memberId: 2,
@@ -122,7 +139,24 @@ export const tempMembers: Member[] = [
         commitment: 5,
         completed: false,
       },
-    ]
+    ],
+    routines: [
+      {
+        id: 4,
+        name: "Evening Walk",
+        description: "Wind down your day with a relaxing walk to clear your mind and promote better sleep."
+      },
+      {
+        id: 5,
+        name: "Evening Yoga",
+        description: "Unwind with a gentle yoga routine to release tension and prepare your body for restful sleep."
+      },
+      {
+        id: 6,
+        name: "Reading",
+        description: "Spend some time reading a book before bed to relax your mind and escape into a different world."
+      }
+    ],
   },
   {
     memberId: 3,
@@ -141,6 +175,7 @@ export const tempMembers: Member[] = [
       height: 178,
       bmi: 23.67,
     },
+    routines: []
   },
   {
     memberId: 4,
@@ -159,6 +194,7 @@ export const tempMembers: Member[] = [
       height: 160,
       bmi: 23.44,
     },
+    routines: []
   },
   {
     memberId: 5,
@@ -177,6 +213,7 @@ export const tempMembers: Member[] = [
       height: 185,
       bmi: 24.84,
     },
+    routines: []
   },
   {
     memberId: 6,
@@ -195,6 +232,7 @@ export const tempMembers: Member[] = [
       height: 155,
       bmi: 22.89,
     },
+    routines: []
   },
 ];
 

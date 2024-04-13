@@ -20,7 +20,7 @@ import {Textarea} from "@/components/ui/textarea";
 import { cn } from "@/lib/utils"
 import { Slider } from "@/components/ui/slider"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, LucideCheck, XIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
@@ -28,14 +28,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {createFitnessGoals} from "@/app/utils/api";
+import {formatDate, isBeforeToday} from "@/app/utils/functions";
 
 interface GoalsProps {
-  goals?: FitnessGoals[];
+  goals: FitnessGoals[];
+  setGoals: (goals: FitnessGoals[]) => void;
 }
 
-const Goals: React.FC<GoalsProps> = ({goals}) => {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [userGoals, setUserGoals] = useState<FitnessGoals[]>(goals || []);
+const Goals: React.FC<GoalsProps> = ({goals, setGoals}) => {
+  const [date, setDate] = React.useState<Date>(new Date());
   const [formData, setFormData] = useState<FitnessGoals>({
     goalName: '',
     type: '',
@@ -54,10 +55,30 @@ const Goals: React.FC<GoalsProps> = ({goals}) => {
   };
 
   const handleSubmit = () => {
-    setFormData({...formData, deadline: date || new Date()});
-    setUserGoals([...userGoals, formData]);
-    // console.log(userGoals);
-    createFitnessGoals(formData, 1); //! temp
+    if (formData.goalName !== '' && formData.description !== '' && formData.type !== '' || date >= new Date()) {
+        setFormData({...formData, deadline: date || new Date()});
+        setGoals([...goals, formData]);
+        // console.log(userGoals);
+
+        createFitnessGoals(formData, 1); //! temp trainer ID
+    }
+  };
+
+  const handleGreenButtonClick = (index: number) => {
+    const updatedGoals = goals.map((goal, i) => {
+      if (i === index) {
+        return { ...goal, completed: true };
+      }
+      return goal;
+    });
+    setGoals(updatedGoals);
+  };
+
+  const handleRedButtonClick = (index: number) => {
+    const goalToDelete = goals[index];
+    const updatedGoals = goals.filter((_, i) => i !== index);
+    setGoals(updatedGoals);
+    //! SERVER: DELETE USER GOAL --> Use `goalToDelete`
   };
 
   return (
@@ -77,15 +98,15 @@ const Goals: React.FC<GoalsProps> = ({goals}) => {
             <>
               <div className="space-y-1">
                 <Label htmlFor="goalName">Title</Label>
-                <Input id="goalName" type="text" placeholder="Run a half-marathon" onChange={handleChange} />
+                <Input required id="goalName" type="text" placeholder="Run a half-marathon" onChange={handleChange} />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="type">Type</Label>
-                <Input id="type" type="text" placeholder="Endurance" onChange={handleChange} />
+                <Input required id="type" type="text" placeholder="Endurance" onChange={handleChange} />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" className="h-20" placeholder="Complete a half-marathon race by September." onChange={handleChange} />
+                <Textarea required id="description" className="h-20" placeholder="Complete a half-marathon race by September." onChange={handleChange} />
               </div>
               <div>
                 <Label htmlFor="commitment">Commitment (days per week)</Label>
@@ -117,7 +138,7 @@ const Goals: React.FC<GoalsProps> = ({goals}) => {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={(day: Date | undefined) => setDate(day)}
+                      onSelect={(day: Date | undefined) => setDate(day || new Date())}
                       initialFocus
                     />
                   </PopoverContent>
@@ -133,19 +154,32 @@ const Goals: React.FC<GoalsProps> = ({goals}) => {
       </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[16rem]">Title</TableHead>
+          <TableHead className="w-[200px]">Title</TableHead>
           <TableHead>Description</TableHead>
-          <TableHead className="text-right">Type</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Deadline</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {userGoals && userGoals.map((goal, index) => {
+        {goals && goals.map((goal, index) => {
           if (!goal.completed) {
             return (
               <TableRow key={index}>
                 <TableCell className="font-medium">{goal.goalName}</TableCell>
                 <TableCell>{goal.description}</TableCell>
-                <TableCell className="text-right">{goal.type}</TableCell>
+                <TableCell>{goal.type}</TableCell>
+                <TableCell style={{ color: isBeforeToday(goal.deadline) ? 'red' : 'green' }}>
+                  {formatDate(goal.deadline)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <button onClick={() => handleGreenButtonClick(index)}>
+                    <LucideCheck className="text-green-500" />
+                  </button>
+                  <button onClick={() => handleRedButtonClick(index)}>
+                    <XIcon className="text-red-500" />
+                  </button>
+                </TableCell>
               </TableRow>
             );
           } else {

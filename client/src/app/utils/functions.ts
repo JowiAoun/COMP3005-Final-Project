@@ -41,3 +41,7 @@ export const formatDate = (date: Date | undefined): string | null => {
 
     return `${year}-${month}-${day}`;
 }
+
+export const isBeforeToday = (deadline: Date) => {
+    return deadline < new Date();
+}
