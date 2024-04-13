@@ -62,7 +62,6 @@ CREATE TABLE FitnessGoals(
 	description TEXT,
 	type VARCHAR(20) NOT NULL,
 	commitment INT NOT NULL DEFAULT 1,
-	currentPr INT NOT NULL DEFAULT 0,
 	memberId INT,
 	completed BOOLEAN,
 	FOREIGN KEY(memberId)
@@ -146,13 +145,6 @@ CREATE TABLE EnrolledIn(
 	PRIMARY KEY(memberId, sessionId)
 );
 
-CREATE TABLE Filters(
-	sessionId INT,
-	FOREIGN KEY(sessionId)
-		REFERENCES Session(sessionId),
-	Filter VARCHAR(32),
-	PRIMARY KEY(sessionId)
-);
 
 CREATE TABLE RoutineContains(
 	exerciseId INT,
