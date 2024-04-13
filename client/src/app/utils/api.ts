@@ -47,27 +47,27 @@ export const enrollMember = (firstName: any, lastName: any, username: any, passw
     .catch((error) => console.error(error));
 }
 
-// export const login = (username: any, password: any) => {
-//   const myHeaders = new Headers();
-//   myHeaders.append("Content-Type", "application/json");
+export const login = (username: any, password: any) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-//   const raw = JSON.stringify({
-//     "username": username,
-//     "password": password
-//   });
+  const raw = JSON.stringify({
+    "username": username,
+    "password": password
+  });
 
-//   const requestOptions: any = {
-//     method: "POST",
-//     headers: myHeaders,
-//     body: raw,
-//     redirect: "follow"
-//   };
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow"
+  };
 
-//   return fetch("http://127.0.0.1:5000/login", requestOptions)
-//     .then((response) => response.json()) // Parse response as JSON
-//     .then((result) => result) // Return the result
-//     .catch((error) => console.error(error));
-// }
+  return fetch("http://127.0.0.1:5000/login", requestOptions)
+    .then((response) => response.json()) // Parse response as JSON
+    .then((result) => result) // Return the result
+    .catch((error) => console.error(error));
+}
 
 export const getHealthMetrics = (memberId: any) => {
   const raw = "";

@@ -434,13 +434,12 @@ def login():
             row_data = dict(zip(columns, row))
             data.append(row_data)
         if len(results) > 0:
-            response = make_response(jsonify({"success": True}))
+            response = make_response(jsonify({"success": True,
+                                             "memberId": str(results[0][0])}))
             # Set the memberId cookie
 
-            response.set_cookie(
-                "memberId", str(results[0][0])
-            )  # Assuming memberId is the first column
-            print(request.cookies.get("memberId"))
+           # Assuming memberId is the first column
+            print(response["memberId"])
             return response
         else:
             return jsonify({"success": False})
