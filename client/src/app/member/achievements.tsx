@@ -1,39 +1,40 @@
 import React from "react"
 import {
-  Table,
-  TableCaption,
+  Table, TableBody,
+  TableCaption, TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {Member} from "@/entities/member";
+import {FitnessGoals} from "@/entities/member";
 
 interface AchievementsProps {
-  member: Member;
+  goals: FitnessGoals[];
 }
 
-const Achievements: React.FC<AchievementsProps> = ({member}) => {
+const Achievements: React.FC<AchievementsProps> = ({goals}) => {
+
   return (
     <Table>
       <TableCaption>A list of your achievements. Keep pushing hard!</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Title</TableHead>
+          <TableHead className="w-[200px]">Title</TableHead>
           <TableHead>Description</TableHead>
           <TableHead className="text-right">Type</TableHead>
         </TableRow>
       </TableHeader>
-      {/*<TableBody>*/}
-      {/*  {sessions && sessions.map((session, index) => (*/}
-      {/*    <TableRow key={index}>*/}
-      {/*      <TableCell className="font-medium">{session.name}</TableCell>*/}
-      {/*      <TableCell>{session.shortDescription}</TableCell>*/}
-      {/*      <TableCell>{session.roomNumber}</TableCell>*/}
-      {/*      <TableCell>{session.startDate.toLocaleString()} - {session.endDate.toLocaleString()}</TableCell>*/}
-      {/*      <TableCell className="text-right">{session.trainerName}</TableCell>*/}
-      {/*    </TableRow>*/}
-      {/*  ))}*/}
-      {/*</TableBody>*/}
+      <TableBody>
+        {goals && goals.map((goal, index) => {
+          if (goal.completed) {
+            return (<TableRow key={index}>
+              <TableCell className="font-medium">{goal.goalName}</TableCell>
+              <TableCell>{goal.description}</TableCell>
+              <TableCell className="text-right">{goal.type}</TableCell>
+            </TableRow>)
+          }
+        })}
+      </TableBody>
     </Table>
   );
 }

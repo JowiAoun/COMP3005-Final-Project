@@ -21,7 +21,7 @@ const Sessions: React.FC<SessionsProps> = ({sessions}) => {
         <TableCaption>A list of your recent sessions.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Name</TableHead>
+            <TableHead className="w-[200px]">Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Room Number</TableHead>
             <TableHead>From/To</TableHead>

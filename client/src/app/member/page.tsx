@@ -40,22 +40,32 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import React, {useState} from "react";
 import {tempBills, tempMembers, tempSessions} from "@/app/utils/tempValues";
 import Goals from "@/app/member/goals";
+import {FitnessGoals, Member} from "@/entities/member";
 
 export default function Page() {
-  const [selectSection, setSelectedSection] = useState(0)
+  const [member, setMember] = useState<Member>(tempMembers[0])
   const [sessions, setSessions] = useState(tempSessions)
+  const [routines, setRoutines] = useState(tempMembers[0].routines)
   const [bills, setBills] = useState(tempBills)
+  const [selectSection, setSelectedSection] = useState(0)
+
+  const setGoals = (goals: FitnessGoals[]) => {
+    setMember(prevMember => ({
+      ...prevMember,
+      fitnessGoals: goals
+    }));
+  };
 
   const getSection = () => {
     switch(selectSection) {
       case 0:
-        return <Analytics member={tempMembers[0]}/>;
+        return <Analytics member={member}/>;
       case 1:
-        return <Routines />;
+        return <Routines routines={routines} setRoutines={setRoutines}/>;
       case 2:
-        return <Goals goals={tempMembers[0].fitnessGoals}/>;
+        return <Goals goals={member.fitnessGoals || []} setGoals={setGoals}/>;
       case 3:
-        return <Achievements member={tempMembers[0]}/>;
+        return <Achievements goals={member.fitnessGoals || []}/>;
       case 4:
         return <Sessions sessions={sessions} />;
       case 5:
@@ -86,7 +96,7 @@ export default function Page() {
   }
 
   const getMembershipDesc = () => {
-    switch(tempMembers[0].membershipType) {
+    switch(member.membershipType) {
       case "Bronze":
       case "Silver":
         return "Thanks for being a valued member! Upgrade for more."
@@ -199,7 +209,7 @@ export default function Page() {
           <div className="mt-auto p-4">
             <Card>
               <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>{tempMembers[0].membershipType} Membership</CardTitle>
+                <CardTitle>{member.membershipType} Membership</CardTitle>
                 <CardDescription>
                   {getMembershipDesc()}
                 </CardDescription>
@@ -277,7 +287,7 @@ export default function Page() {
               <div className="mt-auto">
                 <Card>
                   <CardHeader>
-                    <CardTitle>{tempMembers[0].membershipType} Membership</CardTitle>
+                    <CardTitle>{member.membershipType} Membership</CardTitle>
                     <CardDescription>
                       {getMembershipDesc()}
                     </CardDescription>
@@ -313,7 +323,7 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{tempMembers[0].username}</DropdownMenuLabel>
+              <DropdownMenuLabel>{member.username}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <a href="/member/profile"><DropdownMenuItem>Profile</DropdownMenuItem></a>
               <DropdownMenuItem>Membership</DropdownMenuItem>

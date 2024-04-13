@@ -6,7 +6,7 @@ interface AnalyticsProps {
 }
 
 const Analytics: React.FC<AnalyticsProps> = ({member}) => {
-  return <h1>Hello, {member.firstName} {member.lastName}!</h1>
+  return <h1>You've burnt {member.healthStatics.caloriesBurned} calories, and ran {member.healthStatics.ran}km!</h1>
 }
 
 export default Analytics

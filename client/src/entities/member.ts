@@ -8,6 +8,7 @@ export interface Member {
   healthStatics: HealthStatics;
   healthMetrics: HealthMetrics;
   fitnessGoals?: FitnessGoals[];
+  routines: Routine[];
 }
 
 export interface HealthStatics {
@@ -29,4 +30,10 @@ export interface FitnessGoals {
   type: string;
   commitment: number;
   completed: boolean;
+}
+
+export interface Routine {
+  name: string;
+  description: string;
+  id: number;
 }
