@@ -3,7 +3,9 @@ from flask_cors import CORS
 import psycopg
 import datetime
 
-connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=Wy5w0UY5l55G1Pf")
+connection = psycopg.connect(
+    "dbname=finalproject user=postgres host=localhost port=5432 password=postgres"
+)
 cur = connection.cursor()
 app = Flask(__name__)
 
@@ -350,38 +352,20 @@ def enrollMember():
         if (
             "firstName" in data
             and "lastName" in data
-            and "age" in data
-            and "weight" in data
-            and "height" in data
-            and "bmi" in data
-            and "restingHeartRate" in data
-            and "membershipType" in data
             and "username" in data
             and "password" in data
         ):
             firstName = data["firstName"]
             lastName = data["lastName"]
-            age = data["age"]
-            weight = data["weight"]
-            height = data["height"]
-            bmi = data["bmi"]
-            restingHeartRate = data["restingHeartRate"]
-            membershipType = data["membershipType"]
             username = data["username"]
             password = data["password"]
         cur.execute(
-            """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
-                        VALUES (%s,%s,-1,-1,-1,-1,-1,0,0,%s,%s,%s);                
+            """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, username, password)
+                        VALUES (%s,%s,-1,-1,-1,-1,-1,0,0,%s,%s);                
                     """,
             (
                 firstName,
                 lastName,
-                age,
-                weight,
-                height,
-                bmi,
-                restingHeartRate,
-                membershipType,
                 username,
                 password,
             ),
