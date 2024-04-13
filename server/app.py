@@ -1,16 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, make_response, request, jsonify, redirect
 from flask_cors import CORS
 import psycopg
 import datetime
 
-connection = psycopg.connect("dbname=finalproject user=postgres host=localhost port=5432 password=Wy5w0UY5l55G1Pf")
+connection = psycopg.connect(
+    "dbname=finalproject user=postgres host=localhost port=5432 password=postgres"
+)
 cur = connection.cursor()
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True, port=5000)
 
 @app.route('/', methods=['GET'])
 def hello_world():
@@ -350,38 +352,20 @@ def enrollMember():
         if (
             "firstName" in data
             and "lastName" in data
-            and "age" in data
-            and "weight" in data
-            and "height" in data
-            and "bmi" in data
-            and "restingHeartRate" in data
-            and "membershipType" in data
             and "username" in data
             and "password" in data
         ):
             firstName = data["firstName"]
             lastName = data["lastName"]
-            age = data["age"]
-            weight = data["weight"]
-            height = data["height"]
-            bmi = data["bmi"]
-            restingHeartRate = data["restingHeartRate"]
-            membershipType = data["membershipType"]
             username = data["username"]
             password = data["password"]
         cur.execute(
-            """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,0,0,%s,%s,%s);                
+            """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, username, password)
+                        VALUES (%s,%s,-1,-1,-1,-1,-1,0,0,%s,%s);                
                     """,
             (
                 firstName,
                 lastName,
-                age,
-                weight,
-                height,
-                bmi,
-                restingHeartRate,
-                membershipType,
                 username,
                 password,
             ),
@@ -419,9 +403,17 @@ def createFitnessGoals(memberId):
         print("Goal already exists for this user")
 
 
-@app.route("/login/", methods=["POST"])
+@app.route("/login", methods=["POST", "OPTIONS"])
 ###General
 def login():
+    if request.method == "OPTIONS":
+        # Handle preflight request
+        response = make_response()
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+        response.headers["Access-Control-Allow-Methods"] = "POST"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
     ###Checking if there exists a user with the given username and password
     try:
         data = request.json
@@ -441,11 +433,26 @@ def login():
         for row in results:
             row_data = dict(zip(columns, row))
             data.append(row_data)
-        return jsonify(data)
+        if len(results) > 0:
+            response = make_response(jsonify({"success": True,
+                                             "memberId": str(results[0][0])}))
+            # Set the memberId cookie
 
+           # Assuming memberId is the first column
+            print(response["memberId"])
+            return response
+        else:
+            return jsonify({"success": False})
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)})
+
+
+# @app.route("/member")
+# def member():
+#     memberId = request.cookies.get("memberId")
+#     print(memberId)
+#     return redirect("http://localhost:3000/member")
 
 
 @app.route("/getRoutines/<int:memberId>", methods=["GET"])

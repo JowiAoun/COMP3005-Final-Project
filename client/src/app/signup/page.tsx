@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { enrollMember } from "../utils/api";
 
 export default function Page() {
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
     lastName: "",
-    email: "",
     password: "",
   });
 
@@ -33,6 +33,7 @@ export default function Page() {
     event.preventDefault();
     // console.log(formData);
     //! submit to server
+    enrollMember(formData.firstName, formData.lastName, formData.username, formData.password)
   };
 
   return (
