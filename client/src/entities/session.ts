@@ -11,3 +11,9 @@ export interface Session {
   startDate: Date;
   endDate: Date;
 }
+
+export interface Room {
+  roomNumber: number;
+  capacity: number;
+  isAvailable: boolean;
+}
