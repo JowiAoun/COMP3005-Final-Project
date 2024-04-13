@@ -371,7 +371,7 @@ def enrollMember():
             password = data["password"]
         cur.execute(
             """ INSERT INTO Members(firstName, lastName, age, weight, height, bmi, restingHeartRate, caloriesBurned, numOfKm_ran, membershipType, username, password)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,0,0,%s,%s,%s);                
+                        VALUES (%s,%s,-1,-1,-1,-1,-1,0,0,%s,%s,%s);                
                     """,
             (
                 firstName,
