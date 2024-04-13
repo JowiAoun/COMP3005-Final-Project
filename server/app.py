@@ -403,6 +403,7 @@ def createFitnessGoals(memberId):
         print("Goal already exists for this user")
 
 
+
 @app.route("/login", methods=["POST", "OPTIONS"])
 ###General
 def login():
@@ -437,9 +438,8 @@ def login():
             response = make_response(jsonify({"success": True,
                                              "memberId": str(results[0][0])}))
             # Set the memberId cookie
-
+            print(response)
            # Assuming memberId is the first column
-            print(response["memberId"])
             return response
         else:
             return jsonify({"success": False})
