@@ -531,3 +531,15 @@ export const getCurrentSessions = (memberId: any) => {
     .then((result) => console.log(result))
     .catch((error) => console.error(error));
 }
+
+export const getNumberMembersInSession = (sessionId: any) => {
+  const requestOptions: any = {
+    method: "GET",
+    redirect: "follow"
+  };
+
+  fetch("http://127.0.0.1:5000/getNumberMembersInSession/" + sessionId, requestOptions)
+    .then((response) => response.text())
+    .then((result) => console.log(result))
+    .catch((error) => console.error(error));
+}
