@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import React, {useState} from "react";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Badge} from "@/components/ui/badge";
-import {tempMembers, tempTrainers} from "@/app/utils/tempValues";
 import {
   DropdownMenu,
   DropdownMenuContent, DropdownMenuItem,
@@ -168,10 +167,9 @@ export default function Page() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{tempMembers[0].username}</DropdownMenuLabel>
+              <DropdownMenuLabel>Admin</DropdownMenuLabel>
               <DropdownMenuSeparator/>
               <a href="/admin/profile"><DropdownMenuItem>Profile</DropdownMenuItem></a>
-              <DropdownMenuItem>Membership</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator/>
               <DropdownMenuItem className="text-red-600">Logout</DropdownMenuItem>

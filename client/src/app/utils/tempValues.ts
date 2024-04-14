@@ -1,6 +1,6 @@
 import {Member} from "@/entities/member";
 import {Bill} from "@/entities/bill";
-import {Session} from "@/entities/session";
+import {Room, Session} from "@/entities/session";
 import {Trainer} from "@/entities/trainer";
 
 export const tempMembers: Member[] = [
@@ -385,3 +385,7 @@ export const tempSessions: Session[] = [
     endDate: new Date("2024-04-05T19:00:00"),
   },
 ];
+
+export const tempRooms: Room[] = [
+
+]

@@ -49,7 +49,6 @@ export const MemberAccordion: React.FC<MemberAccordionProps> = ({ member }) => {
                     <p><span className="font-bold">Description:</span> {goal.description}</p>
                     <p><span className="font-bold">Type:</span> {goal.type}</p>
                     <p><span className="font-bold">Commitment:</span> {goal.commitment}</p>
-                    <p><span className="font-bold">Current PR:</span> {goal.currentPr}</p>
                   </li>
                 ))}
               </ul>

@@ -1,58 +1,15 @@
-from flask import Flask, request, jsonify
 import psycopg
+import re
+from datetime import datetime
 
 connection = psycopg.connect(
-    "dbname=finalproject user=postgres host=localhost port=5432 password=postgres"
+    "dbname=finalproject user=postgres host=localhost port=5432 password=Wy5w0UY5l55G1Pf"
 )
 cur = connection.cursor()
 # app = Flask(__name__)
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
-
-
-def hello_world():
-    return "Hello, Docker!"
-
-
-def test_add_to_db():
-    name = request.args.get("name")
-    hobby = request.args.get("hobby")
-    age = request.args.get("age")
-
-    cur.execute(
-        """
-        INSERT INTO test (name, hobby, age)
-        VALUES (%s, %s, %s);
-    """,
-        (name, hobby, age),
-    )
-
-    connection.commit()
-    return "Added to db!"
-
-
-def test_get_from_db():
-    cur.execute("SELECT * FROM test;")
-    rows = cur.fetchall()
-
-    people = []
-    for row in rows:
-        person = {"id": row[0], "name": row[1], "hobby": row[2], "age": row[3]}
-        people.append(person)
-
-    return jsonify(people)
-
-
-def test_clear_db():
-    cur.execute(
-        """
-    DELETE FROM test;
-    """
-    )
-
-    connection.commit()
-    return "Cleared db!"
 
 
 def getHealthStats(memberId):
@@ -99,16 +56,13 @@ def getHealthMetrics(memberId):
         return jsonify({"error": str(e)})
 
 
-def getFitnessGoals(member_id):
-    cur.execute(
-        """ SELECT goalName
+def getFitnessGoals(memberId,completed):
+    cur.execute(""" SELECT *
                     FROM FitnessGoals
-                    WHERE memberId = %d;
-            
-                """
-        % (member_id)
-    )
-    connection.commit()
+                    WHERE memberId = %s AND completed = %s;
+                """,(memberId,completed))
+    result = cur.fetchall()
+    return result
 
 
 # When a user wants to choose a new exercise routine
@@ -152,27 +106,91 @@ def updateTrainerAvailabilites(
         )
         connection.commit()
 
-    except psycopg.errors:
+    except Exception:
         print("Error updating availabilities for trainer")
 
 
 ###Adminstrator
-
-
-##Add functionality to retreive created session to add the filters.
-def addFilters(filters, sessionId):
-    ###Iterating through the filters array to add the filters to a given session.
-    for i in range(0, len(filters)):
+def enrollInSession(memberId, sessionId):
+    try:
         cur.execute(
-            """ INSERT INTO Filters(sessionId, filter) VALUES (%d,%s); 
+            """
+            SELECT COUNT(*) 
+            FROM EnrolledIn 
+            WHERE memberId = %s AND sessionId = %s;
+            """,
+            (memberId, sessionId,)
+        )
+
+        count = cur.fetchone()[0]
+        print(count)
+
+        if count > 0:
+            print("This member is already enrolled in this session")
+            return
+
+
+        cur.execute(
+            """ INSERT INTO EnrolledIn(memberId, sessionId) VALUES(%s, %s)
                     """,
-            (sessionId, filters[i]),
+            (memberId, sessionId,)
         )
         connection.commit()
 
+    except Exception as e:
+        print("Error enrolling in sessions: ", e)
+
+
+def getSessions():
+    try:
+        cur.execute(
+            """ 
+            SELECT *
+            FROM SESSION;
+            """
+        )
+        result = cur.fetchall()
+        connection.commit()
+        if result:
+            print("Retrieved sessions!")
+            return result
+        else:
+            print("Could not retrieve sessions")
+            return None
+
+    except Exception as e:
+        print("Error retrieving for sessions: ", e)
+
+def getSession(sessionId):
+    try:
+        cur.execute(
+            """ 
+            SELECT *
+            FROM Session
+            WHERE sessionId = %s;
+            """, (sessionId, )
+        )
+        return cur.fetchone()
+
+    except Exception:
+        return None
+
+
+def cancelSession(sessionId):
+    try:
+        cur.execute("""
+        DELETE FROM Session
+        WHERE sessionId = %s;
+        """, (sessionId, ))
+        connection.commit()
+        return True
+
+    except Exception as e:
+        return False
+
 
 def createSession(
-    type,
+    sessionType,
     capacity,
     name,
     description,
@@ -181,58 +199,39 @@ def createSession(
     trainerId,
     roomNumber,
     adminId,
-    filters,
+    startTime,
+    endTime,
+    day
 ):
 
-    ###Getting the trainer
-    cur.execute(
-        """ SELECT firstName
-                        FROM TRAINER
-                        WHERE trainerId = %d;
-                    """,
-        (trainerId),
-    )
-    result = cur.fetchall()
     connection.commit()
 
-    if len(result) > 0:
-        try:
+    try:
+        cur.execute(
+            """ INSERT INTO Session (type, capacity, name, description, day, startDate, endDate, startTime, endTime, trainerId, roomNumber, adminId)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """,
+            (
+                sessionType,
+                capacity,
+                name,
+                description,
+                day,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                trainerId,
+                roomNumber,
+                adminId,
+            ),
+        )
+        connection.commit()
+        return True
 
-            cur.execute(
-                """ INSERT INTO Session (type, capacity, name, description, startDate, endDate, trainerId, roomNumber, adminId) VALUES (%s,%d,%s,%s,%d,%d.%d);
-                               """,
-                (
-                    type,
-                    capacity,
-                    name,
-                    description,
-                    startDate,
-                    endDate,
-                    trainerId,
-                    roomNumber,
-                    adminId,
-                ),
-            )
-            connection.commit()
-
-            ###Retreiving the recently added tuple
-
-            cur.execute(
-                """ SELECT sessionId
-                            FROM Session
-                            ORDER BY sessionId DESC
-                            LIMIT 1;
-                        """
-            )
-            recentSession = cur.fetchone()
-
-            ##Adding the filters
-            addFilters(recentSession, filters)
-
-        except psycopg.errors:
-            print("Error inserting session")
-    else:
-        print("The trainer does not exist")
+    except Exception as e:
+        print(e)
+        return False
 
 
 def updateSession(
@@ -253,8 +252,6 @@ def updateSession(
 ##Check this out and change the function
 def updateRoom(roomNumber, sessionId):
     try:
-        # Retri
-
         # Updating the room availability
         cur.execute(
             """ UPDATE Session
@@ -269,9 +266,6 @@ def updateRoom(roomNumber, sessionId):
 
 
 ###Members
-
-
-###Change this function
 def enrollMember(
     firstName,
     lastName,
@@ -333,8 +327,20 @@ def createFitnessGoals(goalName, deadLine, description, type, commitment, member
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
 
+def completeFitnessGoals(goalName,memberId):
+    try:
+        cur.execute(""" DELETE FROM FITNESSGOALS 
+                        WHERE goalName = %s AND memberId = %s);
+                    """, (goalName, memberId))
+
+        connection.commit()
+        return True
+    except Exception as err:
+        print("Error deleting fitness goal",err)
+        return False
 
 ###General
+
 def login(userName, passWord, userType):
     try:
         cur.execute(
@@ -364,24 +370,23 @@ def getRoutines(memberId):
     try:
         cur.execute(
             """
-                    SELECT *
-                    FROM ROUTINE
-                    WHERE memberId = %s;
-                    """,
+            SELECT *
+            FROM ROUTINE
+            WHERE memberId = %s;
+            """,
             (memberId,),
         )
         result = cur.fetchall()
         connection.commit()
         if result:
-            print("Retreived routines for that member!")
+            print("Retrieved routines for that member!")
             return result
         else:
             print("This member does not have any routines...")
             return None
     except Exception as err:
-        print("Error retreiveing routines: ", err)
+        print("Error retrieving routines: ", err)
         return None
-
 
 def getExercises():
     try:
@@ -395,23 +400,105 @@ def getExercises():
     except psycopg.errors:
         print("Error getting exercises")
 
+def getExerciseInfoFromRoutine(exerciseId):
+    try:
+        cur.execute(
+            """
+                    SELECT *
+                    FROM EXERCISE
+                    WHERE exerciseId=%s;
+                    """,
+            (exerciseId,),
+        )
+        result = cur.fetchall()
+        connection.commit()
+        if result:
+            return result
+        else:
+            return None
+    except Exception as err:
+        print("Error retrieving exercises: ", err)
+        return None
+
+def getRoutineExercises(routineId):
+    try:
+        cur.execute(
+            """
+                    SELECT *
+                    FROM RoutineContains
+                    WHERE routineId = %s;
+                    """,
+            (routineId,),
+        )
+        result = cur.fetchall()
+        connection.commit()
+        if result:
+            return result
+        else:
+            return None
+    except Exception as err:
+        print("Error retrieving exercises: ", err)
+        return None
 
 def getAvailableTrainers(day, startTime, endTime):
     try:
         cur.execute(
             """
-                    SELECT trainerId
-                    FROM TRAINERAVAILABILITIES
-                    WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s) AND occupied = False;
-                    """,
-            (day, startTime, endTime),
+            SELECT trainerId
+            FROM TRAINERAVAILABILITIES
+            WHERE day = (%s) AND startTime >= (%s) AND endTime <= (%s) AND occupied = False;
+            """,
+            (day, startTime, endTime, ),
         )
         trainers = cur.fetchall()
         return trainers
 
-    except psycopg.errors:
-        print("Error getting available trainers")
+    except Exception as e:
+        print(e)
+        return None
 
+def getTrainer(trainerId):
+    try:
+        cur.execute("""
+        SELECT *
+        FROM Trainer
+        WHERE trainerId = %s;
+        """, (trainerId,))
+
+        return cur.fetchone()
+
+    except Exception:
+        return None
+
+def setHealthStats(memberId,numOfKm,caloriesBurned):
+    try:
+
+        cur.execute(
+            """
+            UPDATE MEMBERS
+            SET  numOfKm_ran =  %s, caloriesBurned = %s 
+            WHERE memberId = %s;
+            """,
+            (numOfKm, caloriesBurned,memberId)
+        )
+        connection.commit()
+        return True
+    except Exception as err:
+        print(err)
+        return False
+
+def setHealthMetrics(age,weight,height,restingHeartRate,memberId):
+    cur.execute(
+        """
+        UPDATE MEMBERS
+        SET age=%s, weight=%s, height=%s, restingHeartRate=%s
+        WHERE memberId = %s;
+        """,
+        (age,weight,height,restingHeartRate,memberId)
+    )
+    connection.commit()
+
+    return True
 
 ###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following
 def createRoutine(routineName, description, memberId, exercises):
@@ -459,16 +546,16 @@ def memberSearch(searchTerm):
     try:
         cur.execute(
             """
-                    SELECT *
-                    FROM MEMBERS
-                    WHERE POSITION(%s IN firstName)>0 OR POSITION(%s IN lastName)>0;
-                    """,
+            SELECT *
+            FROM MEMBERS
+            WHERE POSITION(%s IN firstName)>0 OR POSITION(%s IN lastName)>0;
+            """,
             (searchTerm, searchTerm),
         )
         result = cur.fetchall()
         connection.commit()
         if result:
-            print("Retreived members with that search term!")
+            print("Retrieved members with that search term!")
             return result
         else:
             print("Invalid search term...")
@@ -476,7 +563,6 @@ def memberSearch(searchTerm):
 
     except Exception as e:
         print("Error searching for members: ", e)
-
 
 def getMembers(memberId):
     try:
@@ -486,13 +572,26 @@ def getMembers(memberId):
                     FROM MEMBERS
                     WHERE memberId = %d;
                     """,
-            (memberId),
+            (memberId, ),
         )
         result = cur.fetchall()
 
-    except psycopg.errors:
+    except Exception:
         print("Error getting members")
 
+def getMember(memberId):
+    try:
+        cur.execute(
+            """
+            SELECT *
+            FROM Members
+            WHERE memberId = %s;
+            """, (memberId, ),
+        )
+        return cur.fetchone()
+    except Exception as e:
+        print(e)
+        return None
 
 ###Finding all the sessions that start on the same days
 def getAvailableRooms():
@@ -529,62 +628,128 @@ def addTrainer(trainerId, day, startTime, endTime):
         print("Error removing trainer")
 
 
-def getEquipment(roomNumber):
-    roomNumber = request.args.get("roomNumber")
+def getEquipments(roomNumber):
     try:
         cur.execute(
             """
             SELECT *
             FROM Equipment
-            WHERE roomNumber = '%d';
+            WHERE roomNumber = %s;
             """,
-            (roomNumber),
-        )
-        result = cur.fetchall()
-        return jsonify(result)
+            (roomNumber, ))
+        return cur.fetchall()
 
-    except Exception as e:
-        return jsonify({"error": e})
+    except Exception:
+        return None
 
 
-def updateEquipment(status, roomNumber):
+def updateEquipment(status, roomNumber, name):
     try:
         cur.execute(
             """ UPDATE Equipment
                         SET status = %s
-                        WHERE roomNumber=%d;
+                        WHERE roomNumber=%s AND name=%s;
                     """,
-            (status, roomNumber),
+            (status, roomNumber, name),
         )
         connection.commit()
+        return True
 
-    except psycopg.errors:
-        print("Error updating status for equipment")
+    except Exception:
+        return False
 
+
+def addEquipment(roomNumber, name, status):
+    try:
+        cur.execute(
+            """
+            INSERT INTO Equipment(name, status, roomNumber)
+            VALUES (%s, %s, %s)
+            """, (name, status, roomNumber))
+        connection.commit()
+
+        return True
+    except Exception:
+        return False
+
+
+def getAllRooms():
+    try:
+        cur.execute("""
+        SELECT *
+        FROM Room
+        """, ())
+
+        return cur.fetchall()
+    except Exception:
+        return None
+
+def getAdministrator(adminId):
+    try:
+        cur.execute("""
+        SELECT *
+        FROM Administrator
+        WHERE adminId = %s;
+        """, (adminId, ))
+
+        return cur.fetchone()
+
+    except Exception as e:
+        print(e)
+        return None
 
 def getBills(memberId):
     try:
         cur.execute(
             """
-                    SELECT *
-                    FROM BILLS 
-                    WHERE memberId = %d;
-                    """,
-            (memberId),
+            SELECT *
+            FROM BILLS 
+            WHERE memberId = %s;
+            """,
+            (memberId, ),
         )
-        connection.commit()
-    except psycopg.errors:
-        print("Error getting bills")
+        return cur.fetchall()
+
+    except Exception as e:
+        return None
 
 
-def addBill(amount, service, adminId, memberId, isPaid, paymentDate):
+def addBill(amount, service, adminId, memberId):
     try:
-        cur.execute(
-            """ INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
-                        VALUES (%f, %s, %d, %d, %r, %s);
-                    """,
-            (amount, service, adminId, memberId, isPaid, paymentDate),
-        )
+        cur.execute("""
+            INSERT INTO Bills(amount, service, adminId, memberId, isPaid, paymentDate)
+            VALUES (%s, %s, %s, %s, false, NULL);
+            """, (amount, service, adminId, memberId, ))
         connection.commit()
-    except psycopg.errors:
-        print("Error adding bill")
+        return True
+    except Exception:
+        return False
+
+def is_valid_date(date_string):
+    pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+    if re.match(pattern, date_string):
+        return True
+    else:
+        return False
+
+def get_day_of_week(date_string) -> str:
+    try:
+        date_obj = datetime.strptime(date_string, "%Y-%m-%d")
+        day_of_week = date_obj.weekday()
+        match day_of_week:
+            case 0:
+                return "Monday"
+            case 1:
+                return "Tuesday"
+            case 2:
+                return "Wednesday"
+            case 3:
+                return "Thursday"
+            case 4:
+                return "Friday"
+            case 5:
+                return "Saturday"
+            case 6:
+                return "Sunday"
+    except ValueError:
+        return None

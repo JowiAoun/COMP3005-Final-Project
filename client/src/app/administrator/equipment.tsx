@@ -42,8 +42,8 @@ const Equipment: React.FC<EquipmentProps> = ({rooms}) => {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search rooms..." />
+          <CommandEmpty>No rooms found.</CommandEmpty>
           <CommandGroup>
             {rooms.map((room) => (
               <CommandItem

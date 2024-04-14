@@ -5,13 +5,13 @@ export interface Member {
   firstName: string;
   lastName: string;
   membershipType: string;
-  healthStatics: HealthStatics;
+  healthStatistics: HealthStatistics;
   healthMetrics: HealthMetrics;
   fitnessGoals?: FitnessGoals[];
   routines: Routine[];
 }
 
-export interface HealthStatics {
+export interface HealthStatistics {
   caloriesBurned: number;
   ran: number;
 }
