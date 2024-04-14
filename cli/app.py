@@ -2,7 +2,7 @@ import psycopg
 import re
 from datetime import datetime
 
-POSTGRES_PASS = "postgres"
+POSTGRES_PASS = "Wy5w0UY5l55G1Pf"
 
 connection = psycopg.connect(
     "dbname=finalproject user=postgres host=localhost port=5432 password="+POSTGRES_PASS
@@ -15,7 +15,7 @@ def getHealthStats(memberId):
         SELECT numOfKm_ran, caloriesBurned
         FROM MEMBERS
         WHERE memberId = %s;
-        """,(memberId,))
+        """, (memberId, ))
 
     results = cur.fetchall()
     return results
@@ -386,15 +386,14 @@ def getRoutines(memberId):
 
 def getExercises():
     try:
-        cur.execute(
-            """
+        cur.execute("""
                     SELECT *
                     FROM EXERCISE;
-                    """
-        )
-        connection.commit()
-    except psycopg.errors:
-        print("Error getting exercises")
+                    """)
+        results = cur.fetchall()
+        return results
+    except Exception as err:
+        print("Error getting exercises",err)
 
 def getExerciseInfoFromRoutine(exerciseId):
     try:
@@ -499,12 +498,13 @@ def setHealthMetrics(age,weight,height,restingHeartRate,memberId):
 ###Function for adding an exercise to a routine. Takes an array of the given exercise ids to the following
 def createRoutine(routineName, description, memberId, exercises):
     try:
+        print(exercises)
         ###Making the routine
         cur.execute(
             """
-                    INSERT INTO Routine(routineName,description,memberId)
-                    VALUES (%s,%s,%s,%d)
-                    """,
+            INSERT INTO Routine(routineName,description,memberId)
+            VALUES (%s,%s,%s)
+            """,
             (routineName, description, memberId),
         )
 
@@ -515,7 +515,7 @@ def createRoutine(routineName, description, memberId, exercises):
             """
                      SELECT routineId
                      FROM ROUTINE
-                     WHERE routineName = %s AND memberId = %d; 
+                     WHERE routineName = %s AND memberId = %s; 
                      """,
             (routineName, memberId),
         )
@@ -524,16 +524,17 @@ def createRoutine(routineName, description, memberId, exercises):
 
         ###Adding exercises to the routine
         for i in range(0, len(exercises)):
-
             cur.execute(
                 """
-                        INSERT INTO RoutineContains(exerciseId,routineId)
-                        VALUES (%s,%d);
-                        """,
-                (exercises[i], routineId),
+                INSERT INTO RoutineContains(exerciseId, routineId)
+                VALUES (%s, %s);
+                """,
+                (exercises[i], routineId[0]),
             )
             connection.commit()
-    except psycopg.errors:
+        print("----- GOOD 3!!!!")
+
+    except Exception:
         print("Error adding exercises")
 
 
@@ -562,18 +563,16 @@ def memberSearch(searchTerm):
 
 def getMembers(memberId):
     try:
-        cur.execute(
-            """
+        cur.execute("""
                     SELECT *
                     FROM MEMBERS
-                    WHERE memberId = %d;
-                    """,
-            (memberId, ),
-        )
+                    WHERE memberId = %s;
+                    """, (memberId,))
         result = cur.fetchall()
+        return result
 
-    except Exception:
-        print("Error getting members")
+    except Exception as err:
+        print("Error getting members",err)
 
 def getMember(memberId):
     try:

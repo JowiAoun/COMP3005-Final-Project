@@ -10,12 +10,14 @@ class Trainer:
         self.password = password
 
 def trainerLogin():
-    username = input("Enter username: ")
-    password = input("Enter password: ")
-    result = app.login(username, password, "Trainer")
-    user = Trainer(result[0], result[1], result[2], result[3], result[4])
-    trainerMenu(user.trainerId)
-
+    try:
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+        result = app.login(username, password, "Trainer")
+        user = Trainer(result[0], result[1], result[2], result[3], result[4])
+        trainerMenu(user.trainerId)
+    except Exception as e:
+        print("Could not login", e)
 
 def trainerMenu(trainerId):
     while True:
