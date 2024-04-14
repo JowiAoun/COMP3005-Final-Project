@@ -2,36 +2,23 @@ import psycopg
 import re
 from datetime import datetime
 
+POSTGRES_PASS = "postgres"
+
 connection = psycopg.connect(
-    "dbname=finalproject user=postgres host=localhost port=5432 password=Wy5w0UY5l55G1Pf"
+    "dbname=finalproject user=postgres host=localhost port=5432 password="+POSTGRES_PASS
 )
 cur = connection.cursor()
-# app = Flask(__name__)
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
 
 def getHealthStats(memberId):
-    try:
-        cur.execute(
-            """
-            SELECT numOfKm_ran, caloriesBurned
-            FROM Members
-            WHERE memberId = %s;
-            """,
-            (memberId,),
-        )
-        columns = [desc[0] for desc in cur.description]
-        results = cur.fetchall()
-        data = []
-        for row in results:
-            row_data = dict(zip(columns, row))
-            data.append(row_data)
-        return jsonify(data)
+    cur.execute(
+        """
+        SELECT numOfKm_ran, caloriesBurned
+        FROM MEMBERS
+        WHERE memberId = %s;
+        """,(memberId,))
 
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    results = cur.fetchall()
+    return results
 
 
 def getHealthMetrics(memberId):
@@ -50,11 +37,22 @@ def getHealthMetrics(memberId):
         for row in results:
             row_data = dict(zip(columns, row))
             data.append(row_data)
-        return jsonify(data)
+        return data
 
     except Exception as e:
-        return jsonify({"error": str(e)})
+        return None
 
+def completeFitnessGoals(goalName,memberId):
+    try:
+        cur.execute(""" DELETE FROM FITNESSGOALS 
+                        WHERE goalName = %s AND memberId = %s);
+                    """, (goalName, memberId))
+
+        connection.commit()
+        return True
+    except Exception as err:
+        print("Error deleting fitness goal",err)
+        return False
 
 def getFitnessGoals(memberId,completed):
     cur.execute(""" SELECT *
@@ -327,17 +325,15 @@ def createFitnessGoals(goalName, deadLine, description, type, commitment, member
     except psycopg.errors.UniqueViolation:
         print("Goal already exists for this user")
 
-def completeFitnessGoals(goalName,memberId):
+def createFitnessGoals(goalName, deadLine, description, type, commitment, memberId):
     try:
-        cur.execute(""" DELETE FROM FITNESSGOALS 
-                        WHERE goalName = %s AND memberId = %s);
-                    """, (goalName, memberId))
-
+        cur.execute("""
+            INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment, memberId, completed)
+            VALUES (%s, %s, %s, %s, %s, %s, false);
+        """, (goalName, deadLine, description, type, commitment, memberId))
         connection.commit()
-        return True
     except Exception as err:
-        print("Error deleting fitness goal",err)
-        return False
+        print("Error creating fitness goal", err)
 
 ###General
 

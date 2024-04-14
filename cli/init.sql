@@ -1,6 +1,4 @@
 SET search_path = "public";
-
-
 -- DDL
 CREATE TABLE Members(
 	memberId SERIAL PRIMARY KEY,
@@ -88,6 +86,7 @@ CREATE TABLE Bills(
 		REFERENCES Members(memberId)
 );
 
+
 CREATE TABLE Room(
 	roomNumber INT NOT NULL DEFAULT 1,
 	capacity INT NOT NULL DEFAULT 0,
@@ -118,6 +117,7 @@ CREATE TABLE Session(
 );
 
 
+
 CREATE TABLE Equipment(
 	name VARCHAR(30) NOT NULL,
 	status VARCHAR(30) NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE EnrolledIn(
 		REFERENCES Members(memberID),
 	FOREIGN KEY(sessionId)
 		REFERENCES Session(sessionId)
-        ON DELETE CASCADE,
+		ON DELETE CASCADE,
 	PRIMARY KEY(memberId, sessionId)
 );
 
@@ -157,7 +157,8 @@ VALUES ('John', 'Doe', 30, 180, 70, 25, 70, 1500, 10, 'Gold', 'john_doe', 'passw
 -- Trainer
 INSERT INTO Trainer (firstName, lastName, username, password)
 VALUES ('Michael', 'Scott', 'michael', 'officeboss'),
-       ('Pam', 'Beesly', 'pam', 'receptionist');
+       ('Pam', 'Beesly', 'pam', 'receptionist'),
+       ('Joe','Boyer','joe','boyer123');
 
 -- Administrator
 INSERT INTO Administrator (firstName, lastName, username, password)
@@ -171,17 +172,27 @@ VALUES ('Squats', 'Lower body exercise',1),
 
 INSERT INTO Exercise (exerciseName,sets,reps)
 VALUES ('Squats',12, 3),
-      ('Treadmill running',20, 1);
+      ('Treadmill running',20, 1),
+	  ('Pushups', 20, 2),
+	  ('Pullups', 3, 15),
+	  ('Bench press', 3, 10),
+	  ('Situps', 3, 12),
+	  ('Overhead press', 5, 5),
+	  ('Chinups', 6, 4),
+	  ('Jumping jacks', 10, 10),
+	  ('Burpees', 3, 20);
 
 INSERT INTO FitnessGoals (goalName, deadLine, description, type, commitment,memberId,completed)
 VALUES ('Weight Loss', '2024-06-30', 'Lose 10kg in 3 months', 'Weight', 3,1,false),
-       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3,2,true);
+       ('Muscle Gain', '2024-08-31', 'Gain 5kg of muscle mass', 'Muscle', 3,2,true),
+	   ('Faster cycling speed', '2024-05-20', 'Achieve 35km/h top speed', 'Cardio', 2, 3, false);
 
 INSERT INTO TrainerAvailabilities (day, startTime, endTime, trainerId,occupied)
-VALUES ('Monday', '10:00:00', '13:00:00', 1,true),
+VALUES ('Monday', '10:00:00', '13:00:00', 1,false),
        ('Tuesday', '9:00:00', '11:00:00', 1,false),
        ('Wednesday', '9:00:00', '12:00:00', 2,true),
-       ('Friday', '15:00:00', '18:00:00', 1,true);
+       ('Friday', '15:00:00', '18:00:00', 1,false),
+       ('Monday', '8:00:00', '12:00:00', 2,true);
 
 INSERT INTO Bills (amount, service, adminId, memberId,paymentDate,isPaid)
 VALUES (50.00, 'Gym Membership', 1, 1,'2023-09-01',true),
@@ -198,12 +209,19 @@ VALUES (100,20,true),
 --Initializing the tables that have foreign keys--
 INSERT INTO Session (type,capacity,name,description,day,startDate,endDate,startTime,endTime,trainerId,roomNumber,adminId)
 VALUES ('Personal', 1, 'Training Session', 'Simple training session','Wednesday','2024-09-01','2024-10-01','10:00:00','12:00:00',1,202,1),
-       ('Group', 1, 'Badminton', 'Beginner friendly class for learning 	Badminton','Monday','2024-08-12','2024-09-01','9:00:00','10:00:00',2,203,2);
+       ('Group', 1, 'Badminton', 'Beginner friendly class for learning badminton','Monday','2024-08-12','2024-09-01','9:00:00','10:00:00',2,203,2),
+	   ('Group', 20, 'Football', 'Advanced football session', 'Thursday', '2024-08-15', '2024-10-16', '10:00:00', '12:00:00', 3, 100, 2);
+
 
 
 INSERT INTO Equipment(name, status, roomNumber)
 VALUES ('Dumbbell rack','available',202),
-       ('Badminton rack','unavailable',203);
+       ('Badminton rack','unavailable',203),
+       ('BasketBall Hoop','available',203),
+       ('Tread-Mill','available',100),
+       ('Yoga Mats','available',302),
+       ('Medicine Balls','unavailable',202),
+       ('Squat Rack','available',202);
 
 INSERT INTO EnrolledIn(memberId, sessionId)
 VALUES (1,1),

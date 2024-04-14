@@ -27,7 +27,10 @@ def main():
             trainerLogin()
 
         if choice == 3:
-            result = app.login("stanley", "pretzelday", "Administrator")
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+
+            result = app.login(username, password, "Administrator")
             user = Administrator(result[0], result[1], result[2], result[3], result[4])
 
             while choice != 0:
